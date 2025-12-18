@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+
+# Virtual environment 
+env/
+
+# Models
+models/
+models2/
+yolov5nu_ncnn_model
+*.pt
