@@ -2,8 +2,8 @@ import time
 import multiprocessing as mp
 import psutil
 
-from camera_module import object_detection_process
-from conversation_module import VoiceAssistant, configure_microphone_gain
+from detected_object_module import object_detection_process
+from voice_assistant_module import VoiceAssistant, configure_microphone_gain
 
 
 def main():

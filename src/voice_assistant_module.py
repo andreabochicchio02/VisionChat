@@ -10,7 +10,8 @@ import requests
 import sys
 from vosk import Model, KaldiRecognizer
 
-from camera_module import DetectedObject
+from detected_object_module import DetectedObject
+from chatLLM import LLMClient
 
 
 # Audio stream configuration 
@@ -139,94 +140,6 @@ class VoiceAssistant:
         self.listening = False
         return recognized_text
     
-    def _handle_user_input(self, input: str) -> None:
-        """
-        Process recognized input (text) and generate response
-        """
-        
-        # Request latest object detections
-        self.command_queue.put("GET_DETECTIONS")
-        
-        # Wait for detection results
-        try:
-            detected_objects: List[DetectedObject] = self.detection_queue.get(timeout=2.0)
-        except queue.Empty:
-            detected_objects = []
-            print("Detection data not available")
-        
-        # Generate response
-        response = self._generate_response(detected_objects, input)
-        
-        self._speak_response(response)
-    
-    def _generate_response(self, objects: List[DetectedObject], user_text: str) -> str:
-        """
-        Generate a response based on detected objects
-        """
-
-        # Build prompt
-        scene_description = "OBJECTS DETECTED BY CAMERA:\n"
-
-        if objects:
-            for i, obj in enumerate(objects, 1):
-                position = obj.get_position_description()
-                scene_description += f"{i}. {obj.class_name} - Position: {position}\n"
-        else:
-            scene_description += "No objects detected.\n"
-
-        
-        prompt = (
-                "OBJECTS DETECTED BY CAMERA:\n"
-                f"{scene_description}\n"
-                f"USER QUESTION: {user_text}\n"
-                "INSTRUCTION: Answer the question taking into account "
-                "the objects detected by the camera and their positions.")
-
-
-        payload = {
-            "model": MODEL,
-            "prompt": prompt,
-            "stream": True 
-        }
-
-        print("\nREQUEST", "="*25)
-        print(prompt)
-        print("\nRESPONSE", "="*25)
-
-        full_response = ""
-    
-        try:
-            # Execute streaming request
-            with requests.post(URL, json=payload, stream=True, timeout=30) as response:
-                response.raise_for_status()
-                
-                # Process streaming response line by line
-                for line in response.iter_lines():
-                    if line:
-                        chunk = json.loads(line)
-                        
-                        if 'response' in chunk:
-                            # Print in streaming
-                            sys.stdout.write(chunk['response'])
-                            sys.stdout.flush()
-                            
-                            # Accumulate response text
-                            full_response += chunk['response']
-                
-                print("\n")
-                
-                # Return the complete response
-                return full_response
-    
-        except requests.exceptions.ConnectionError:
-            error_msg = "Error: unable to connect to Ollama server. Make sure Ollama is running with the command 'ollama serve'."
-            print(error_msg)
-            return error_msg
-        except Exception as e:
-            error_msg = f"An error occurred: {e}"
-            print(error_msg)
-            return error_msg
-
     
     def _speak_response(self, text: str) -> None:
         """
@@ -243,12 +156,10 @@ class VoiceAssistant:
     
     def start(self) -> None:
         """Start the voice assistant
-        
-        # EXECUTION   #TODO Da Cambiare
-        # 1. Main thread → keeps the program running and handles stop/interrupts.
-        # 2. PyAudio callback → PyAudio's internal thread that receives audio data and puts it into the queue.
-        # 3. _process_audio_stream thread → separate thread that reads from the queue, performs speech recognition, and generates responses.
         """ 
+
+        # Initialize LLM client
+        llm = LLMClient()
 
         print("Starting audio stream...")
         
@@ -277,7 +188,22 @@ class VoiceAssistant:
                 # If text was recognized, process the request
                 if recognized_text:
                     print(f"\nRecognized Input: {recognized_text}")
-                    self._handle_user_input(recognized_text)
+
+                    # Request latest object detections
+                    self.command_queue.put("GET_DETECTIONS")
+                    
+                    # Wait for detection results
+                    try:
+                        detected_objects: List[DetectedObject] = self.detection_queue.get(timeout=0.5)
+                    except queue.Empty:
+                        detected_objects = []
+                        print("Detection data not available")
+                    
+                    # Generate response
+                    response = llm.generate_response(detected_objects, recognized_text)
+                    
+                    self._speak_response(response)
+
                 else:
                     print("No voice input recognized. Try again")
 
