@@ -1,9 +1,10 @@
 import time
 import queue
 import multiprocessing as mp
-from typing import List
 import numpy as np
 import cv2
+import sys
+from typing import List
 from picamera2 import Picamera2
 
 
@@ -142,14 +143,13 @@ class ObjectDetector:
                 
                 # Validate class ID and skip N/A classes
                 if class_id < len(CLASSES) and CLASSES[class_id] != "N/A":
-                    # Extract and scale bounding box coordinates
-                    box = detections[0, 0, i, 3:7] * np.array([width, height, width, height])
-                    start_x, start_y, end_x, end_y = box.astype("int")
+                    # Extract bounding box coordinates
+                    x_min, y_min, x_max, y_max = detections[0, 0, i, 3:7]
                     
                     detected_objects.append(DetectedObject(
                         class_name=CLASSES[class_id],
                         confidence=confidence * 100,
-                        bounding_box=(start_x, start_y, end_x, end_y)
+                        bounding_box=(x_min, y_min, x_max, y_max)
                     ))
         
         return detected_objects
@@ -171,6 +171,9 @@ def object_detection_process(detection_queue: mp.Queue, command_queue: mp.Queue)
         detection_queue: Queue to send detection results to main process
     """
     detector = ObjectDetector()
+
+    f = open('log_camera.txt', 'w')
+    sys.stdout = f
     
     try:
         detector.initialize()
@@ -199,12 +202,28 @@ def object_detection_process(detection_queue: mp.Queue, command_queue: mp.Queue)
             elapsed_time = time.time() - start_time
             fps = frame_count / elapsed_time if elapsed_time > 0 else 0
             
-            print(f"Frame {frame_count}, FPS: {fps:.1f}, Objects: {len(detector.latest_detections)}")
+            print(f"Frame {frame_count}, FPS: {fps:.1f}, Objects: {len(detector.latest_detections)}", flush=True)
             
+
+            # Every 5 frames, print detailed detections
+            if frame_count % 5 == 0:
+                for i, obj in enumerate(detector.latest_detections, start=1):
+                    print(
+                        f"  Object {i} | Class: {obj.class_name}, "
+                        f"Confidence: {obj.confidence:.2f}, "
+                        f"Bounding Box: {obj.box}",
+                        flush=True
+                    )
+
+
             # Throttle frame rate to reduce CPU usage
             time.sleep(FRAME_DELAY)
     
     except Exception as e:
+        # stdout on console
+        sys.stdout = sys.__stdout__
+        f.close()
+
         print(f"Error stopping camera {e}")
     finally:
         detector.cleanup()

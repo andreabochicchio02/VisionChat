@@ -74,8 +74,7 @@ class VoiceAssistant:
         
         # State management
         self.running = False
-        self.is_speaking = False
-        self.speech_detected = False
+        self.listening = False
         
         # Find and configure microphone
         self.mic_index = self._find_usb_microphone()
@@ -95,25 +94,25 @@ class VoiceAssistant:
     def _audio_callback(self, in_data, frame_count, time_info, status):
         """
         Callback function for audio stream
-        Queues audio data unless the system is currently speaking
+        Queues audio data only when listening is active
         """
 
-        # Only process microphone input when the assistant is not speaking, 
-        # to avoid an echo loop during speech output
-        if not self.is_speaking:    
+        if self.listening:  
             self.audio_queue.put(in_data)
         return (in_data, pyaudio.paContinue)
     
-    def _process_audio_stream(self) -> None:
+    def _record_and_recognize(self) -> None:
         """
         Background thread that processes audio data
         Handles both partial and final speech recognition results
         """
-        while self.running:
-            # Pause processing while speaking
-            if self.is_speaking:
-                time.sleep(0.1)         #TODO we could increase this value
-                continue
+                
+        self.recognizer.Reset()
+        recognized_text = ""
+
+        self.listening = True
+        
+        while self.listening:
             
             try:
                 audio_data = self.audio_queue.get(timeout=0.1)
@@ -121,30 +120,29 @@ class VoiceAssistant:
                 # Check if we have a complete phrase
                 if self.recognizer.AcceptWaveform(audio_data):
                     result = json.loads(self.recognizer.Result())
-                    text = result.get("text", "")
-                    
-                    if text:
-                        print(f"\n>>> Request: {text}")
-                        self._handle_user_input(text)
-                        self.speech_detected = False
+                    recognized_text = result.get("text", "")
+
+                    if recognized_text:
+                        break
+
                 else:
                     # Handle partial recognition results
                     partial = json.loads(self.recognizer.PartialResult())
                     text = partial.get("partial", "")
                     
                     if text:
-                        if not self.speech_detected:        # speech detected, user starts talking
-                            self.speech_detected = True
                         print(f"\r🗣️  {text}", end="", flush=True)
             
             except queue.Empty:
                 continue
+
+        self.listening = False
+        return recognized_text
     
     def _handle_user_input(self, input: str) -> None:
         """
         Process recognized input (text) and generate response
         """
-        print("Processing request...")
         
         # Request latest object detections
         self.command_queue.put("GET_DETECTIONS")
@@ -155,13 +153,6 @@ class VoiceAssistant:
         except queue.Empty:
             detected_objects = []
             print("Detection data not available")
-        
-        # Log detected objects
-        if detected_objects:
-            objects_str = ", ".join(str(obj) for obj in detected_objects)
-            print(f"Currently visible: {objects_str}")
-        else:
-            print(f"No objects in view")
         
         # Generate response
         response = self._generate_response(detected_objects, input)
@@ -184,10 +175,13 @@ class VoiceAssistant:
             scene_description += "No objects detected.\n"
 
         
-        prompt = f""" {scene_description}
-                    USER QUESTION: {user_text}
-                    INSTRUCTION: Answer the question taking into account
-                     the objects detected by the camera and their positions. """
+        prompt = (
+                "OBJECTS DETECTED BY CAMERA:\n"
+                f"{scene_description}\n"
+                f"USER QUESTION: {user_text}\n"
+                "INSTRUCTION: Answer the question taking into account "
+                "the objects detected by the camera and their positions.")
+
 
         payload = {
             "model": MODEL,
@@ -195,10 +189,9 @@ class VoiceAssistant:
             "stream": True 
         }
 
-        print("="*50)
+        print("\nREQUEST", "="*25)
         print(prompt)
-        print("="*50)
-        print("\nRESPONSE:\n")
+        print("\nRESPONSE", "="*25)
 
         full_response = ""
     
@@ -243,31 +236,20 @@ class VoiceAssistant:
             text: Text to convert to speech
         """
         
-        # Pause audio input processing
-        self.is_speaking = True
-        
-        # Clear audio queue to avoid processing stale audio
-        while True:
-            try:
-                self.audio_queue.get_nowait()
-            except queue.Empty:
-                break
-        
         # Perform text-to-speech
         text_to_speech(text)
         
-        # Resume audio input processing
-        self.is_speaking = False
-        print("Speech complete\n")
+        print("Speech complete")
     
     def start(self) -> None:
         """Start the voice assistant
         
-        # EXECUTION
+        # EXECUTION   #TODO Da Cambiare
         # 1. Main thread → keeps the program running and handles stop/interrupts.
         # 2. PyAudio callback → PyAudio's internal thread that receives audio data and puts it into the queue.
         # 3. _process_audio_stream thread → separate thread that reads from the queue, performs speech recognition, and generates responses.
-        """
+        """ 
+
         print("Starting audio stream...")
         
         # Open audio stream
@@ -284,16 +266,23 @@ class VoiceAssistant:
         self.running = True
         self.stream.start_stream()
         
-        # Start audio processing thread
-        self.process_thread = threading.Thread(target=self._process_audio_stream, daemon=True)
-        self.process_thread.start()
-        
-        print("Voice assistant active! Speak into the microphone...")
-        
-        # Main loop
+        print("Voice Assistant active!")
+
         try:
             while self.running:
-                time.sleep(0.1)
+                input("Press ENTER to speak... ")
+
+                recognized_text = self._record_and_recognize()
+
+                # If text was recognized, process the request
+                if recognized_text:
+                    print(f"\nRecognized Input: {recognized_text}")
+                    self._handle_user_input(recognized_text)
+                else:
+                    print("No voice input recognized. Try again")
+
+                print("="*50, "\n")
+        
         except KeyboardInterrupt:
             print("User interrupted")
             self.stop()

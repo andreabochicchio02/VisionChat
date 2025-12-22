@@ -1,0 +1,126 @@
+Loading DNN model...
+Model loaded
+Initializing camera...
+Camera started
+Frame 1, FPS: 0.9, Objects: 1
+Frame 2, FPS: 0.8, Objects: 0
+Frame 3, FPS: 0.8, Objects: 1
+Frame 4, FPS: 0.7, Objects: 1
+Frame 5, FPS: 0.7, Objects: 1
+  Object 1 | Class: person, Confidence: 67.37, Bounding Box: (0.015677065, -0.00034978986, 0.9071119, 0.9965842)
+Frame 6, FPS: 0.7, Objects: 0
+Frame 7, FPS: 0.7, Objects: 0
+Frame 8, FPS: 0.7, Objects: 1
+Frame 9, FPS: 0.7, Objects: 1
+Frame 10, FPS: 0.7, Objects: 1
+  Object 1 | Class: person, Confidence: 56.52, Bounding Box: (0.014301091, 0.0049732924, 0.79965174, 0.9925391)
+Frame 11, FPS: 0.7, Objects: 2
+Frame 12, FPS: 0.7, Objects: 1
+Frame 13, FPS: 0.7, Objects: 1
+Frame 14, FPS: 0.7, Objects: 2
+Frame 15, FPS: 0.7, Objects: 1
+  Object 1 | Class: person, Confidence: 58.27, Bounding Box: (0.0006431341, -0.014926672, 0.6335987, 0.91780305)
+Frame 16, FPS: 0.7, Objects: 2
+Frame 17, FPS: 0.7, Objects: 3
+Frame 18, FPS: 0.7, Objects: 2
+Frame 19, FPS: 0.7, Objects: 4
+Frame 20, FPS: 0.7, Objects: 4
+  Object 1 | Class: book, Confidence: 61.73, Bounding Box: (0.35573986, 0.2965843, 0.6124892, 0.7453446)
+  Object 2 | Class: person, Confidence: 60.57, Bounding Box: (0.008484244, 0.41312099, 0.59582263, 0.9579258)
+  Object 3 | Class: tie, Confidence: 59.14, Bounding Box: (0.3592407, 0.03931269, 0.63333446, 0.8122817)
+  Object 4 | Class: person, Confidence: 56.27, Bounding Box: (0.022697657, 0.0057736635, 0.7806455, 0.99687517)
+Frame 21, FPS: 0.7, Objects: 2
+Frame 22, FPS: 0.7, Objects: 2
+Frame 23, FPS: 0.7, Objects: 2
+Frame 24, FPS: 0.7, Objects: 2
+Frame 25, FPS: 0.7, Objects: 1
+  Object 1 | Class: toilet, Confidence: 64.94, Bounding Box: (0.0075441897, 0.02036643, 0.8167809, 0.9838729)
+Frame 26, FPS: 0.7, Objects: 1
+Frame 27, FPS: 0.7, Objects: 1
+Frame 28, FPS: 0.7, Objects: 1
+Frame 29, FPS: 0.7, Objects: 1
+Frame 30, FPS: 0.7, Objects: 1
+  Object 1 | Class: toilet, Confidence: 67.77, Bounding Box: (0.021453321, 0.16422877, 0.9757771, 0.9863647)
+Frame 31, FPS: 0.7, Objects: 1
+Frame 32, FPS: 0.7, Objects: 1
+Frame 33, FPS: 0.7, Objects: 1
+Frame 34, FPS: 0.7, Objects: 1
+Frame 35, FPS: 0.7, Objects: 1
+  Object 1 | Class: person, Confidence: 59.43, Bounding Box: (0.016417295, 0.0075570643, 0.76560223, 0.9955994)
+Frame 36, FPS: 0.7, Objects: 2
+Frame 37, FPS: 0.7, Objects: 1
+Frame 38, FPS: 0.7, Objects: 1
+Frame 39, FPS: 0.7, Objects: 1
+Frame 40, FPS: 0.7, Objects: 1
+  Object 1 | Class: person, Confidence: 62.05, Bounding Box: (0.010897934, 0.0004505515, 0.78470755, 1.0007463)
+Frame 41, FPS: 0.7, Objects: 1
+Frame 42, FPS: 0.7, Objects: 1
+Frame 43, FPS: 0.7, Objects: 1
+Frame 44, FPS: 0.7, Objects: 1
+Frame 45, FPS: 0.7, Objects: 2
+  Object 1 | Class: person, Confidence: 68.11, Bounding Box: (-0.0031632185, 0.030264556, 0.61466646, 0.9015124)
+  Object 2 | Class: refrigerator, Confidence: 59.35, Bounding Box: (0.0251849, 0.2858922, 0.5921036, 0.9581569)
+Frame 46, FPS: 0.7, Objects: 4
+Frame 47, FPS: 0.7, Objects: 2
+Frame 48, FPS: 0.7, Objects: 1
+Frame 49, FPS: 0.7, Objects: 1
+Frame 50, FPS: 0.7, Objects: 1
+  Object 1 | Class: book, Confidence: 65.95, Bounding Box: (0.17924313, 0.03275764, 0.6369893, 0.5782754)
+Frame 51, FPS: 0.7, Objects: 2
+Frame 52, FPS: 0.7, Objects: 2
+Frame 53, FPS: 0.7, Objects: 3
+Frame 54, FPS: 0.7, Objects: 2
+Frame 55, FPS: 0.7, Objects: 3
+  Object 1 | Class: person, Confidence: 66.57, Bounding Box: (0.022451013, -0.0012554824, 0.5833616, 0.72354984)
+  Object 2 | Class: refrigerator, Confidence: 58.44, Bounding Box: (0.0063397884, 0.47641942, 0.5993187, 0.996789)
+  Object 3 | Class: tennis racket, Confidence: 55.88, Bounding Box: (0.28179395, 0.0025106817, 0.6772643, 0.23747195)
+Frame 56, FPS: 0.7, Objects: 3
+Frame 57, FPS: 0.7, Objects: 2
+Frame 58, FPS: 0.7, Objects: 2
+Frame 59, FPS: 0.7, Objects: 0
+Frame 60, FPS: 0.7, Objects: 1
+  Object 1 | Class: book, Confidence: 73.98, Bounding Box: (-0.0072095096, 0.09343368, 0.52441967, 0.7056682)
+Frame 61, FPS: 0.7, Objects: 2
+Frame 62, FPS: 0.7, Objects: 2
+Frame 63, FPS: 0.7, Objects: 2
+Frame 64, FPS: 0.7, Objects: 2
+Frame 65, FPS: 0.7, Objects: 2
+  Object 1 | Class: book, Confidence: 74.83, Bounding Box: (0.012351885, 0.13544118, 0.4297111, 0.7351023)
+  Object 2 | Class: person, Confidence: 61.04, Bounding Box: (0.09028247, -0.0047388077, 0.98089683, 1.0015701)
+Frame 66, FPS: 0.7, Objects: 1
+Frame 67, FPS: 0.7, Objects: 1
+Frame 68, FPS: 0.7, Objects: 1
+Frame 69, FPS: 0.7, Objects: 1
+Frame 70, FPS: 0.7, Objects: 1
+  Object 1 | Class: book, Confidence: 82.29, Bounding Box: (0.0029508471, 0.16399121, 0.5752846, 0.72016466)
+Frame 71, FPS: 0.7, Objects: 2
+Frame 72, FPS: 0.7, Objects: 1
+Frame 73, FPS: 0.7, Objects: 1
+Frame 74, FPS: 0.7, Objects: 1
+Frame 75, FPS: 0.7, Objects: 1
+  Object 1 | Class: book, Confidence: 79.22, Bounding Box: (0.011508971, 0.1840249, 0.5974736, 0.76853406)
+Frame 76, FPS: 0.7, Objects: 1
+Frame 77, FPS: 0.7, Objects: 1
+Frame 78, FPS: 0.7, Objects: 1
+Frame 79, FPS: 0.7, Objects: 1
+Frame 80, FPS: 0.7, Objects: 1
+  Object 1 | Class: person, Confidence: 58.77, Bounding Box: (0.13709962, 0.0069240034, 0.9807501, 0.9944148)
+Frame 81, FPS: 0.7, Objects: 1
+Frame 82, FPS: 0.7, Objects: 1
+Frame 83, FPS: 0.7, Objects: 2
+Frame 84, FPS: 0.7, Objects: 2
+Frame 85, FPS: 0.7, Objects: 2
+  Object 1 | Class: refrigerator, Confidence: 70.24, Bounding Box: (-0.0013527274, 0.48963103, 0.60564107, 0.99714196)
+  Object 2 | Class: refrigerator, Confidence: 62.86, Bounding Box: (0.5368227, -0.00037193298, 1.0007881, 0.9926259)
+Frame 86, FPS: 0.7, Objects: 2
+Frame 87, FPS: 0.7, Objects: 2
+Frame 88, FPS: 0.7, Objects: 2
+Frame 89, FPS: 0.7, Objects: 2
+Frame 90, FPS: 0.7, Objects: 2
+  Object 1 | Class: refrigerator, Confidence: 67.74, Bounding Box: (-0.00039675832, 0.50164104, 0.6079731, 0.9971572)
+  Object 2 | Class: refrigerator, Confidence: 61.28, Bounding Box: (0.5349352, 0.00045087934, 1.0002152, 0.9926543)
+Frame 91, FPS: 0.7, Objects: 2
+Frame 92, FPS: 0.7, Objects: 2
+Frame 93, FPS: 0.7, Objects: 2
+Frame 94, FPS: 0.7, Objects: 2
+Camera stopped
