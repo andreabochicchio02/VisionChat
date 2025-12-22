@@ -6,6 +6,8 @@ import queue
 import multiprocessing as mp
 from typing import List
 import pyaudio
+import requests
+import sys
 from vosk import Model, KaldiRecognizer
 
 from camera_module import DetectedObject
@@ -21,6 +23,10 @@ MIC_CONTROL_NAME = "Mic"
 VOSK_MODEL_PATH = "models/vosk-model-small-en-us-0.15"
 ESPEAK_VOICE = "en-us"
 ESPEAK_SPEED = "140"
+
+# Language Model configuration
+URL = "http://10.75.235.144:11434/api/generate"
+MODEL = "llama3.2:3b"
 
 
 # Utility functions
@@ -160,32 +166,74 @@ class VoiceAssistant:
         # Generate response
         response = self._generate_response(detected_objects, input)
         
-        # Speak the response
-        print(f">>> Response: {response}")
         self._speak_response(response)
     
     def _generate_response(self, objects: List[DetectedObject], user_text: str) -> str:
         """
         Generate a response based on detected objects
-        TODO: Replace with actual LLM integration
-        
-        Args:
-            objects: List of currently detected objects
-            user_text: The user's spoken input
-            
-        Returns:
-            Response text to be spoken
         """
-        if not objects:
-            return "I don't see any objects in the current view"
-        
-        count = len(objects)
-        object_names = ", ".join(obj.class_name for obj in objects)
-        
-        if count == 1:
-            return f"I can see 1 object: {object_names}"
+
+        # Build prompt
+        scene_description = "OBJECTS DETECTED BY CAMERA:\n"
+
+        if objects:
+            for i, obj in enumerate(objects, 1):
+                position = obj.get_position_description()
+                scene_description += f"{i}. {obj.class_name} - Position: {position}\n"
         else:
-            return f"I can see {count} objects: {object_names}"
+            scene_description += "No objects detected.\n"
+
+        
+        prompt = f""" {scene_description}
+                    USER QUESTION: {user_text}
+                    INSTRUCTION: Answer the question taking into account
+                     the objects detected by the camera and their positions. """
+
+        payload = {
+            "model": MODEL,
+            "prompt": prompt,
+            "stream": True 
+        }
+
+        print("="*50)
+        print(prompt)
+        print("="*50)
+        print("\nRESPONSE:\n")
+
+        full_response = ""
+    
+        try:
+            # Execute streaming request
+            with requests.post(URL, json=payload, stream=True, timeout=30) as response:
+                response.raise_for_status()
+                
+                # Process streaming response line by line
+                for line in response.iter_lines():
+                    if line:
+                        chunk = json.loads(line)
+                        
+                        if 'response' in chunk:
+                            # Print in streaming
+                            sys.stdout.write(chunk['response'])
+                            sys.stdout.flush()
+                            
+                            # Accumulate response text
+                            full_response += chunk['response']
+                
+                print("\n")
+                
+                # Return the complete response
+                return full_response
+    
+        except requests.exceptions.ConnectionError:
+            error_msg = "Error: unable to connect to Ollama server. Make sure Ollama is running with the command 'ollama serve'."
+            print(error_msg)
+            return error_msg
+        except Exception as e:
+            error_msg = f"An error occurred: {e}"
+            print(error_msg)
+            return error_msg
+
     
     def _speak_response(self, text: str) -> None:
         """

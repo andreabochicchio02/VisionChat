@@ -36,7 +36,33 @@ class DetectedObject:
     def __init__(self, class_name, confidence, bounding_box):
         self.class_name = class_name
         self.confidence = confidence
-        self.box = bounding_box  # Qui assegniamo l'argomento 'bounding_box' alla variabile 'box'
+        self.box = bounding_box
+
+    def get_position_description(self) -> str:
+        """Calculate the relative position of the object in the image"""
+        start_x, start_y, end_x, end_y = self.box
+        
+        # Calculate object center
+        center_x = (start_x + end_x) / 2
+        center_y = (start_y + end_y) / 2
+        
+        # Determine horizontal position (assuming normalized coordinates 0-1)
+        if center_x < 0.33:
+            pos_h = "left"
+        elif center_x < 0.67:
+            pos_h = "center"
+        else:
+            pos_h = "right"
+        
+        # Determine vertical position
+        if center_y < 0.33:
+            pos_v = "top"
+        elif center_y < 0.67:
+            pos_v = "middle"
+        else:
+            pos_v = "bottom"
+        
+        return f"{pos_v} {pos_h}"
 
     def __repr__(self) -> str:
         return f"{self.class_name} ({self.confidence:.1f}%)"
