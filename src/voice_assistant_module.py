@@ -79,12 +79,12 @@ class VoiceAssistant:
         self.listening = False
         
         # Find and configure microphone
-        self.mic_index = self._find_usb_microphone()
+        self.mic_index = self.find_usb_microphone()
 
         # thread for listening to proactive alerts from detection process
         self.alert_thread = None
     
-    def _find_usb_microphone(self) -> int:
+    def find_usb_microphone(self) -> int:
         """
         Locate USB microphone device
         """
@@ -96,7 +96,7 @@ class VoiceAssistant:
         
         raise RuntimeError("No USB microphone detected")
     
-    def _audio_callback(self, in_data, frame_count, time_info, status):
+    def audio_callback(self, in_data, frame_count, time_info, status):
         """
         Callback function for audio stream
         Queues audio data only when listening is active
@@ -106,7 +106,7 @@ class VoiceAssistant:
             self.audio_queue.put(in_data)
         return (in_data, pyaudio.paContinue)
     
-    def _record_and_recognize(self) -> None:
+    def record_and_recognize(self) -> None:
         """
         Background thread that processes audio data
         Handles both partial and final speech recognition results
@@ -145,7 +145,7 @@ class VoiceAssistant:
         return recognized_text
     
     
-    def _speak_response(self, text: str) -> None:
+    def speak_response(self, text: str) -> None:
         """
         Speak a response and pause audio processing during speech
         
@@ -159,9 +159,9 @@ class VoiceAssistant:
         print("Speech complete")
 
 
-    def _alert_listener(self) -> None:
+    def alert_listener(self) -> None:
         """Background thread that listens for alerts from the object detection process"""
-        
+
         while self.running:
             try:
                 alert = self.alert_queue.get(timeout=0.5)
@@ -180,7 +180,7 @@ class VoiceAssistant:
                     print(f"\n[NOTIFICATION] {msg} (timestamp: {time.strftime('%H:%M:%S', time.localtime(timestamp))})", flush=True)
 
                     # Speak the notification
-                    self._speak_response(msg)
+                    self.speak_response(msg)
 
             except queue.Empty:
                 continue
@@ -205,7 +205,7 @@ class VoiceAssistant:
 
 
         # start background thread to listen for proactive alerts
-        self.alert_thread = threading.Thread(target=self._alert_listener, daemon=True)
+        self.alert_thread = threading.Thread(target=self.alert_listener, daemon=True)
         self.alert_thread.start()
         
 
@@ -219,7 +219,7 @@ class VoiceAssistant:
             input=True,
             input_device_index=self.mic_index,
             frames_per_buffer=CHUNK,
-            stream_callback=self._audio_callback
+            stream_callback=self.audio_callback
         )
         
         self.stream.start_stream()
@@ -230,7 +230,7 @@ class VoiceAssistant:
             while self.running:
                 input("Press ENTER to speak... ")
 
-                recognized_text = self._record_and_recognize()
+                recognized_text = self.record_and_recognize()
 
                 # If text was recognized, process the request
                 if recognized_text:
@@ -249,7 +249,7 @@ class VoiceAssistant:
                     # Generate response
                     response = llm.generate_response(detected_objects, recognized_text)
                     
-                    self._speak_response(response)
+                    self.speak_response(response)
 
                 else:
                     print("No voice input recognized. Try again")
