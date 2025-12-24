@@ -56,11 +56,12 @@ def text_to_speech(text: str) -> None:
 
 
 class VoiceAssistant:
-    """Handles speech recognition and interaction with object detection"""
-    
-    def __init__(self, detection_queue: mp.Queue, command_queue: mp.Queue):
+    """Handles speech recognition, alerts and interaction with object detection"""
+
+    def __init__(self, detection_queue: mp.Queue, command_queue: mp.Queue, alert_queue: mp.Queue):
         self.detection_queue = detection_queue
         self.command_queue = command_queue
+        self.alert_queue = alert_queue
         
         # Initialize Vosk speech recognition
         print("Loading speech recognition model")
@@ -79,6 +80,9 @@ class VoiceAssistant:
         
         # Find and configure microphone
         self.mic_index = self._find_usb_microphone()
+
+        # thread for listening to proactive alerts from detection process
+        self.alert_thread = None
     
     def _find_usb_microphone(self) -> int:
         """
@@ -153,13 +157,57 @@ class VoiceAssistant:
         text_to_speech(text)
         
         print("Speech complete")
+
+
+    def _alert_listener(self) -> None:
+        """Background thread that listens for alerts from the object detection process"""
+        
+        while self.running:
+            try:
+                alert = self.alert_queue.get(timeout=0.5)
+
+                if not alert:
+                    continue
+                else:
+                    obj: DetectedObject = alert['object']
+                    timestamp: float = alert.get('timestamp', time.time())
+
+                    class_name = obj.class_name
+                    pos = obj.get_position_description()
+                    conf = obj.confidence
+
+                    msg = f"Notification: {class_name} detected ({conf:.0f}% confidence) at {pos}."
+                    print(f"\n[NOTIFICATION] {msg} (timestamp: {time.strftime('%H:%M:%S', time.localtime(timestamp))})", flush=True)
+
+                    # Speak the notification
+                    self._speak_response(msg)
+
+            except queue.Empty:
+                continue
+
     
     def start(self) -> None:
-        """Start the voice assistant
+        """
+        Start the voice assistant
         """ 
+
+        self.running = True
 
         # Initialize LLM client
         llm = LLMClient()
+
+        # Send initial alert list to detection process (may be empty)
+        # TODO Eliminare da qui, aggiungerlo quando lo cheide l'utente
+        try:
+            self.command_queue.put(("SET_ALERTS", llm.get_alert_objects()))
+        except Exception:
+            print("Failed to send initial alert list to detection process")
+
+
+        # start background thread to listen for proactive alerts
+        self.alert_thread = threading.Thread(target=self._alert_listener, daemon=True)
+        self.alert_thread.start()
+        
 
         print("Starting audio stream...")
         
@@ -174,9 +222,8 @@ class VoiceAssistant:
             stream_callback=self._audio_callback
         )
         
-        self.running = True
         self.stream.start_stream()
-        
+
         print("Voice Assistant active!")
 
         try:
@@ -223,8 +270,9 @@ class VoiceAssistant:
         
         self.audio.terminate()
         
-        if hasattr(self, 'process_thread'):
-            self.process_thread.join()
+
+        if self.alert_thread and self.alert_thread.is_alive():
+            self.alert_thread.join()
         
         print("Voice assistant stopped")
 

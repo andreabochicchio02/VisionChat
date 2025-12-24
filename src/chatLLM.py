@@ -14,7 +14,8 @@ class LLMClient:
         LLM client with conversation memory (last N question/answer pairs)
         """
         self.max_history = max_history
-        self.history: List[Tuple[str, str]] = []  # (user_question, llm_answer)
+        self.history: List[Tuple[str, str]] = []    # (user_question, llm_answer)
+        self.alert_object_list = set(["person"])    #TODO Delete person    # Stored as a set of class names (strings)
 
 
     def add_interaction(self, user_question: str, llm_answer: str) -> None:
@@ -45,12 +46,25 @@ class LLMClient:
 
         return formatted.strip()
 
+    def add_alert_object(self, class_name: str) -> None:
+        """Add an object class to the alert list"""
+        self.alert_object_list.add(class_name)
+
+    def remove_alert_object(self, class_name: str) -> None:
+        """Remove an object class from the alert list"""
+        self.alert_object_list.discard(class_name)
+
+    def get_alert_objects(self) -> list:
+        """Return current alert object classes as a list"""
+        return list(self.alert_object_list)
 
     def generate_response(self, objects: List, user_text: str) -> str:
         """
         Generate a response based on detected objects and conversation history
         """
 
+        # Build scene description
+        scene_description = ""
         if objects:
             for i, obj in enumerate(objects, 1):
                 position = obj.get_position_description()

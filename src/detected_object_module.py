@@ -11,7 +11,7 @@ from picamera2 import Picamera2
 # Object detection model configuration 
 MODEL_WEIGHTS = "models/ssd_mobilenet_v3_large_coco_2020_01_14/frozen_inference_graph.pb"
 MODEL_CONFIG = "models/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"
-CONFIDENCE_THRESHOLD = 0.55
+CONFIDENCE_THRESHOLD = 0.65
 FRAME_SIZE = (512, 384)
 BLOB_SIZE = (320, 320)
 FRAME_DELAY = 0.5  # TODO CHANGE IF NECESSARY
@@ -76,6 +76,7 @@ class ObjectDetector:
         self.net = None
         self.camera = None
         self.latest_detections: List[DetectedObject] = []
+        self.alert_enabled = {}  # class_name -> bool, to manage alerts
         
     def initialize(self) -> None:
         """Initialize the detection model and camera"""
@@ -161,7 +162,7 @@ class ObjectDetector:
             print("Camera stopped")
 
 
-def object_detection_process(detection_queue: mp.Queue, command_queue: mp.Queue) -> None:
+def object_detection_process(detection_queue: mp.Queue, command_queue: mp.Queue, alert_queue: mp.Queue) -> None:
     """
     Main loop for the object detection process
     Continuously captures frames and updates detection results
@@ -186,17 +187,46 @@ def object_detection_process(detection_queue: mp.Queue, command_queue: mp.Queue)
             # Check for commands from main process
             try:
                 command = command_queue.get_nowait()    # get a command from the queue without waiting
+                # STOP command
                 if command == "STOP":
                     break
+                # Request to send current detections
                 elif command == "GET_DETECTIONS":
-                    # Send current detection results
                     detection_queue.put(detector.latest_detections.copy())
+                # Add new alerts
+                elif isinstance(command, tuple) and command[0] == "SET_ALERTS":
+                    for cls in command[1]:
+                        detector.alert_enabled[cls] = True
+                    print(f"Added alerts: {command[1]}", flush=True)
+                # Remove alerts
+                elif isinstance(command, tuple) and command[0] == "REMOVE_ALERTS":
+                    for cls in command[1]:
+                        detector.alert_enabled.pop(cls, None)
+                    print(f"Removed alerts: {command[1]}", flush=True)
             except queue.Empty:
                 pass    # No command, continue
             
             # Perform detection on current frame
             detector.latest_detections = detector.capture_and_detect()
+
+            #alert handling
+            visible_classes = {obj.class_name for obj in detector.latest_detections}
             
+            for cls, enabled in list(detector.alert_enabled.items()):
+                # If object is visible and alert allowed
+                if cls in visible_classes and enabled:
+                    obj = next(o for o in detector.latest_detections if o.class_name == cls)
+                    alert_queue.put({'object': obj, 'timestamp': time.time()})
+                    
+                    detector.alert_enabled[cls] = False
+                    print(f"Sent alert for {cls}", flush=True)
+
+                # If object not visible -> re-enable alert
+                elif cls not in visible_classes:
+                    if not detector.alert_enabled[cls]:
+                        detector.alert_enabled[cls] = True
+                        print(f"Re-enabled alert for {cls}", flush=True)
+
             # Log performance metrics
             frame_count += 1
             elapsed_time = time.time() - start_time

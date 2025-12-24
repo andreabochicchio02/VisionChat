@@ -13,12 +13,13 @@ def main():
     # Create inter-process communication queues
     detection_queue = mp.Queue()
     command_queue = mp.Queue()
+    alert_queue = mp.Queue()
     
     # Start object detection in separate process
     print("Launching object detection process...")
     detection_proc = mp.Process(
         target=object_detection_process,
-        args=(detection_queue, command_queue)
+        args=(detection_queue, command_queue, alert_queue)
     )
     detection_proc.start()
     
@@ -33,7 +34,7 @@ def main():
     time.sleep(3)
     
     # Start voice assistant in main process
-    assistant = VoiceAssistant(detection_queue, command_queue)
+    assistant = VoiceAssistant(detection_queue, command_queue, alert_queue)
     
     try:
         assistant.start()
