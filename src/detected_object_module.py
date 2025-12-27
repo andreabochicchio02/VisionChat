@@ -11,7 +11,7 @@ from picamera2 import Picamera2
 # Object detection model configuration 
 MODEL_WEIGHTS = "models/ssd_mobilenet_v3_large_coco_2020_01_14/frozen_inference_graph.pb"
 MODEL_CONFIG = "models/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"
-CONFIDENCE_THRESHOLD = 0.65
+CONFIDENCE_THRESHOLD = 0.60
 FRAME_SIZE = (512, 384)
 BLOB_SIZE = (320, 320)
 FRAME_DELAY = 0.5  # TODO CHANGE IF NECESSARY

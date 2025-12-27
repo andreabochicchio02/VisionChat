@@ -15,7 +15,7 @@ class LLMClient:
         """
         self.max_history = max_history
         self.history: List[Tuple[str, str]] = []    # (user_question, llm_answer)
-        self.alert_object_list = set(["person"])    #TODO Delete person    # Stored as a set of class names (strings)
+        self.alert_object_list = set()              # Stored as a set of class names (strings)
 
 
     def add_interaction(self, user_question: str, llm_answer: str) -> None:
@@ -58,6 +58,87 @@ class LLMClient:
         """Return current alert object classes as a list"""
         return list(self.alert_object_list)
 
+    def detect_alert_request(self, user_text: str) -> dict:
+        """
+        Detect if user is requesting an alert and extract target objects.
+        Returns: dict with 'is_alert_request', 'response', and 'target_objects'
+        """
+
+        prompt = (
+            f"USER MESSAGE: \"{user_text}\"\n"
+
+            "TASK:\n"
+            "Classify whether the user is asking for a FUTURE notification when objects appear.\n\n"
+
+            "DECISION RULES (FOLLOW ALL):\n"
+            "1. Set \"is_alert_request\" to true ONLY if the user explicitly asks for a future notification.\n"
+            "2. The message MUST contain clear notification verbs such as:\n"
+            "   'notify me', 'alert me', 'tell me when'.\n"
+            "3. Questions about the current scene (e.g. 'what do you see?', 'what is there?') are NOT alert requests.\n"
+            "4. If there is any doubt, set \"is_alert_request\" to false.\n"
+            "5. DO NOT guess or invent objects.\n"
+            "6. Extract target objects ONLY if they are explicitly mentioned in the user message.\n\n"
+
+            "OUTPUT FORMAT (JSON ONLY):\n"
+            "{\n"
+            '  "is_alert_request": true or false,\n'
+            '  "target_objects": ["object1", "object2"]\n'
+            "}\n\n"
+
+            "EXAMPLES:\n"
+            "User: \"What can you see?\"\n"
+            "Output:\n"
+            "{ \"is_alert_request\": false, \"target_objects\": [] }\n\n"
+
+            "User: \"Notify me when you see a dog\"\n"
+            "Output:\n"
+            "{ \"is_alert_request\": true, \"target_objects\": [\"dog\"] }\n\n"
+
+            "User: \"Alert me if a person appears\"\n"
+            "Output:\n"
+            "{ \"is_alert_request\": true, \"target_objects\": [\"person\"] }\n\n"
+
+            "User: \"Do you see a cat?\"\n"
+            "Output:\n"
+            "{ \"is_alert_request\": false, \"target_objects\": [] }\n\n"
+
+            "Respond ONLY with valid JSON. No explanations.\n"
+            f"USER MESSAGE: \"{user_text}\"\n"
+        )
+
+
+        payload = {
+            "model": MODEL,
+            "prompt": prompt,
+            "stream": False,
+            "format": "json"
+        }
+
+        try:
+            response = requests.post(URL, json=payload, timeout=15)
+            response.raise_for_status()
+
+            raw = response.json()
+            generated_respose = raw['response']
+            result_json = json.loads(generated_respose)
+            print(result_json)
+
+            return result_json
+
+
+        except requests.exceptions.ConnectionError:
+            print(
+                "Error: unable to connect to Ollama server. "
+                "Make sure Ollama is running with 'ollama serve'."
+            )
+            return { "is_alert_request": False, "target_objects": []}
+
+        except Exception as e:              # This also catches json.JSONDecodeError if the model returns invalid JSON
+            print(f"An error occurred: {e}")
+            return { "is_alert_request": False, "target_objects": []}
+
+
+
     def generate_response(self, objects: List, user_text: str) -> str:
         """
         Generate a response based on detected objects and conversation history
@@ -81,7 +162,7 @@ class LLMClient:
             f"{conversation_history}\n\n"
             "OBJECTS DETECTED BY CAMERA:\n"
             f"{scene_description}\n\n"
-            f"USER QUESTION: {user_text}\n"
+            f"USER MESSAGE: {user_text}\n"
             "INSTRUCTION: Answer the question taking into account "
             "the detected objects, their positions, and the previous conversation."
         )
@@ -103,13 +184,18 @@ class LLMClient:
                 response.raise_for_status()
 
                 for line in response.iter_lines():
-                    if line:
-                        chunk = json.loads(line)
+                    if not line:
+                        continue
 
-                        if "response" in chunk:
-                            sys.stdout.write(chunk["response"])
-                            sys.stdout.flush()
-                            full_response += chunk["response"]
+                    try:
+                        chunk = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+
+                    if "response" in chunk:
+                        sys.stdout.write(chunk["response"])
+                        sys.stdout.flush()
+                        full_response += chunk["response"]
 
                 print("\n")
 

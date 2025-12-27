@@ -10,7 +10,7 @@ import requests
 import sys
 from vosk import Model, KaldiRecognizer
 
-from detected_object_module import DetectedObject
+from detected_object_module import DetectedObject, CLASSES
 from chatLLM import LLMClient
 
 
@@ -185,32 +185,21 @@ class VoiceAssistant:
             except queue.Empty:
                 continue
 
-    
-    def start(self) -> None:
-        """
-        Start the voice assistant
-        """ 
 
-        self.running = True
+    def prepare_llm(self) -> LLMClient:
+        """Create and return an LLM client instance."""
+        return LLMClient()
 
-        # Initialize LLM client
-        llm = LLMClient()
-
-        # Send initial alert list to detection process (may be empty)
-        # TODO Eliminare da qui, aggiungerlo quando lo cheide l'utente
-        try:
-            self.command_queue.put(("SET_ALERTS", llm.get_alert_objects()))
-        except Exception:
-            print("Failed to send initial alert list to detection process")
-
-
-        # start background thread to listen for proactive alerts
+    def start_alert_listener_thread(self) -> None:
+        """Start background thread to listen for proactive alerts."""
         self.alert_thread = threading.Thread(target=self.alert_listener, daemon=True)
         self.alert_thread.start()
-        
+
+    def open_audio_stream(self) -> None:
+        """Open and start the audio stream using current microphone index."""
 
         print("Starting audio stream...")
-        
+
         # Open audio stream
         self.stream = self.audio.open(
             format=pyaudio.paInt16,
@@ -221,10 +210,54 @@ class VoiceAssistant:
             frames_per_buffer=CHUNK,
             stream_callback=self.audio_callback
         )
-        
+
         self.stream.start_stream()
 
         print("Voice Assistant active!")
+
+    def handle_alert_request(self, recognized_text: str, llm: LLMClient) -> bool:
+        """
+        Check whether the recognized text is an alert command and handle it.
+        """
+        alert_info = llm.detect_alert_request(recognized_text)
+
+        if isinstance(alert_info, dict) and alert_info.get("is_alert_request"):
+            raw_objects = alert_info.get("target_objects", [])
+            valid_objects = []
+            invalid_objects = []
+
+            for obj in raw_objects:
+                clean_obj = obj.strip().lower()
+
+                # Keep existing behavior: attempt to check CLASSES if present
+                if clean_obj in CLASSES:
+                    valid_objects.append(clean_obj)
+                else:
+                    invalid_objects.append(clean_obj)
+
+            response_text = ""
+            if valid_objects:
+                objs_str = ", ".join(valid_objects)
+                response_text += f"Understood. I will notify you when I detect: {objs_str}. "
+
+                # Send command to object detection process to set alerts
+                self.command_queue.put(("SET_ALERTS", valid_objects))
+
+            if invalid_objects:
+                objs_str = ", ".join(invalid_objects)
+                response_text += f"I am unable to detect the following object: {objs_str}."
+            
+            if not response_text:
+                response_text = "I understood you want an alert, but I couldn't identify which object specifically."
+
+            print(response_text)
+            self.speak_response(response_text)
+            return True
+
+        return False
+
+    def process_user_interaction(self, llm: LLMClient) -> None:
+        """Main loop that prompts the user, records speech, and processes requests."""
 
         try:
             while self.running:
@@ -236,40 +269,50 @@ class VoiceAssistant:
                 if recognized_text:
                     print(f"\nRecognized Input: {recognized_text}")
 
+                    # Verify if the user just wants a notification upon object detection
+                    if self.handle_alert_request(recognized_text, llm):
+                        continue
+
                     # Request latest object detections
                     self.command_queue.put("GET_DETECTIONS")
-                    
+
                     # Wait for detection results
                     try:
-                        detected_objects: List[DetectedObject] = self.detection_queue.get(timeout=0.5)
+                        detected_objects: List[DetectedObject] = self.detection_queue.get(timeout=1)
                     except queue.Empty:
                         detected_objects = []
                         print("Detection data not available")
-                    
+
                     # Generate response
                     response = llm.generate_response(detected_objects, recognized_text)
-                    
+
                     self.speak_response(response)
 
                 else:
                     print("No voice input recognized. Try again")
 
                 print("="*50, "\n")
-        
+
         except KeyboardInterrupt:
             print("User interrupted")
             self.stop()
-    
-    def stop(self) -> None:
-        """Shutdown the voice assistant"""
-        self.running = False
-        
-        if self.stream:
-            self.stream.stop_stream()
-            self.stream.close()
-        
-        self.audio.terminate()
-        
+
+    def start(self) -> None:
+        """Start the voice assistant by initializing components and entering main loop."""
+
+        self.running = True
+
+        # Initialize LLM client
+        llm = self.prepare_llm()
+
+        # start background thread to listen for proactive alerts
+        self.start_alert_listener_thread()
+
+        # Open audio stream
+        self.open_audio_stream()
+
+        # Enter main interaction loop
+        self.process_user_interaction(llm)
 
         if self.alert_thread and self.alert_thread.is_alive():
             self.alert_thread.join()
