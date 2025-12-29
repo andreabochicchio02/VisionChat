@@ -2,117 +2,34 @@ Loading DNN model...
 Model loaded
 Initializing camera...
 Camera started
-Frame 1, FPS: 0.8, Objects: 2
-Frame 2, FPS: 0.7, Objects: 2
-Frame 3, FPS: 0.7, Objects: 2
-Frame 4, FPS: 0.7, Objects: 2
-Frame 5, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 66.53, Bounding Box: (0.0007159412, 0.49403748, 0.61316586, 0.99796426)
-  Object 2 | Class: refrigerator, Confidence: 57.79, Bounding Box: (0.5496263, 0.0032901168, 1.000906, 0.99966985)
-Frame 6, FPS: 0.7, Objects: 2
-Frame 7, FPS: 0.7, Objects: 2
-Frame 8, FPS: 0.7, Objects: 2
-Frame 9, FPS: 0.7, Objects: 2
-Frame 10, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 67.51, Bounding Box: (-0.000593096, 0.48831564, 0.6110078, 0.997217)
-  Object 2 | Class: refrigerator, Confidence: 60.10, Bounding Box: (0.53247625, 0.0002374053, 1.0005356, 0.9925175)
-Frame 11, FPS: 0.7, Objects: 2
-Frame 12, FPS: 0.7, Objects: 2
-Frame 13, FPS: 0.7, Objects: 2
-Frame 14, FPS: 0.7, Objects: 2
-Frame 15, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 65.42, Bounding Box: (-0.0009050667, 0.4838356, 0.60903955, 0.9978559)
-  Object 2 | Class: refrigerator, Confidence: 57.73, Bounding Box: (0.5005003, 0.009258121, 0.99885345, 1.0031474)
-Frame 16, FPS: 0.7, Objects: 2
-Frame 17, FPS: 0.7, Objects: 2
-Frame 18, FPS: 0.7, Objects: 2
-Frame 19, FPS: 0.7, Objects: 2
-Frame 20, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 66.90, Bounding Box: (-0.0006105304, 0.48991588, 0.6085061, 0.998168)
-  Object 2 | Class: refrigerator, Confidence: 60.78, Bounding Box: (0.5122621, -0.00057402253, 1.0010082, 0.9943162)
-Frame 21, FPS: 0.7, Objects: 2
-Frame 22, FPS: 0.7, Objects: 2
-Frame 23, FPS: 0.7, Objects: 2
-Frame 24, FPS: 0.7, Objects: 2
-Frame 25, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 67.96, Bounding Box: (-0.0013433993, 0.48878205, 0.611032, 0.9974402)
-  Object 2 | Class: refrigerator, Confidence: 60.61, Bounding Box: (0.5181417, -0.0007250607, 1.0011505, 0.99222004)
-Frame 26, FPS: 0.7, Objects: 2
-Frame 27, FPS: 0.7, Objects: 2
-Frame 28, FPS: 0.7, Objects: 2
-Frame 29, FPS: 0.7, Objects: 2
-Frame 30, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 68.69, Bounding Box: (-0.00048318505, 0.49123752, 0.6092354, 0.9975194)
-  Object 2 | Class: refrigerator, Confidence: 60.33, Bounding Box: (0.50920415, 0.008994192, 0.9987029, 1.0038625)
-Frame 31, FPS: 0.7, Objects: 2
-Frame 32, FPS: 0.7, Objects: 2
-Frame 33, FPS: 0.7, Objects: 2
-Frame 34, FPS: 0.7, Objects: 2
-Frame 35, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 70.36, Bounding Box: (-0.0010209978, 0.48890767, 0.6057825, 0.9976692)
-  Object 2 | Class: refrigerator, Confidence: 60.45, Bounding Box: (0.5293985, 0.00082841516, 1.0002519, 0.99235094)
-Frame 36, FPS: 0.7, Objects: 2
-Frame 37, FPS: 0.7, Objects: 2
-Frame 38, FPS: 0.7, Objects: 2
-Frame 39, FPS: 0.7, Objects: 2
-Frame 40, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 66.93, Bounding Box: (-0.001342833, 0.4838095, 0.61085564, 0.99774337)
-  Object 2 | Class: refrigerator, Confidence: 59.16, Bounding Box: (0.5297817, 0.00048822165, 1.000743, 0.99183047)
-Frame 41, FPS: 0.7, Objects: 2
-Frame 42, FPS: 0.7, Objects: 2
-Frame 43, FPS: 0.7, Objects: 2
-Frame 44, FPS: 0.7, Objects: 2
-Frame 45, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 68.27, Bounding Box: (-0.0006634891, 0.4873747, 0.6072154, 0.99814403)
-  Object 2 | Class: refrigerator, Confidence: 58.66, Bounding Box: (0.53030586, 0.0011756122, 0.9998534, 0.9915854)
-Frame 46, FPS: 0.7, Objects: 2
-Frame 47, FPS: 0.7, Objects: 2
-Frame 48, FPS: 0.7, Objects: 2
-Frame 49, FPS: 0.7, Objects: 2
-Frame 50, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 67.51, Bounding Box: (-0.0012618303, 0.4769886, 0.60801524, 0.9975433)
-  Object 2 | Class: refrigerator, Confidence: 60.55, Bounding Box: (0.52889943, 0.0008632839, 1.0005126, 0.991745)
-Frame 51, FPS: 0.7, Objects: 2
-Frame 52, FPS: 0.7, Objects: 2
-Frame 53, FPS: 0.7, Objects: 2
-Frame 54, FPS: 0.7, Objects: 2
-Frame 55, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 67.87, Bounding Box: (-0.00049212575, 0.49287337, 0.6087569, 0.998617)
-  Object 2 | Class: refrigerator, Confidence: 60.78, Bounding Box: (0.5285729, -0.0007430017, 1.0008562, 0.9922004)
-Frame 56, FPS: 0.7, Objects: 2
-Frame 57, FPS: 0.7, Objects: 2
-Frame 58, FPS: 0.7, Objects: 2
-Frame 59, FPS: 0.7, Objects: 2
-Frame 60, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 67.38, Bounding Box: (-0.00043165684, 0.49169967, 0.60911983, 0.9977068)
-  Object 2 | Class: refrigerator, Confidence: 58.37, Bounding Box: (0.53762215, -0.0010156035, 0.99962765, 0.99272496)
-Frame 61, FPS: 0.7, Objects: 2
-Frame 62, FPS: 0.7, Objects: 2
-Frame 63, FPS: 0.7, Objects: 2
-Frame 64, FPS: 0.7, Objects: 2
-Frame 65, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 70.47, Bounding Box: (-0.0008574128, 0.49156037, 0.6073445, 0.99762774)
-  Object 2 | Class: refrigerator, Confidence: 64.28, Bounding Box: (0.5312958, 0.0012611747, 0.99999106, 0.99230486)
-Frame 66, FPS: 0.7, Objects: 2
-Frame 67, FPS: 0.7, Objects: 2
-Frame 68, FPS: 0.7, Objects: 2
-Frame 69, FPS: 0.7, Objects: 2
-Frame 70, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 69.30, Bounding Box: (-0.0018130839, 0.49356213, 0.60831463, 0.9979037)
-  Object 2 | Class: refrigerator, Confidence: 63.74, Bounding Box: (0.5401554, -0.0007574558, 0.9993447, 0.99184936)
-Frame 71, FPS: 0.7, Objects: 2
-Frame 72, FPS: 0.7, Objects: 2
-Frame 73, FPS: 0.7, Objects: 2
-Frame 74, FPS: 0.7, Objects: 2
-Frame 75, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 68.65, Bounding Box: (-0.0008507669, 0.49498555, 0.609447, 0.9980711)
-  Object 2 | Class: refrigerator, Confidence: 63.04, Bounding Box: (0.5323602, -0.0005597472, 0.99986696, 0.99261606)
-Frame 76, FPS: 0.7, Objects: 2
-Frame 77, FPS: 0.7, Objects: 2
-Frame 78, FPS: 0.7, Objects: 2
-Frame 79, FPS: 0.7, Objects: 2
-Frame 80, FPS: 0.7, Objects: 2
-  Object 1 | Class: refrigerator, Confidence: 67.20, Bounding Box: (-0.0011690259, 0.48731858, 0.61023897, 0.99816173)
-  Object 2 | Class: refrigerator, Confidence: 57.90, Bounding Box: (0.5126962, -0.0018319488, 1.0000869, 0.9941614)
-Frame 81, FPS: 0.7, Objects: 2
-Camera stopped
+Frame 1, FPS: 0.9, Objects: 0
+Frame 2, FPS: 0.8, Objects: 0
+Frame 3, FPS: 0.8, Objects: 0
+Frame 4, FPS: 0.8, Objects: 0
+Frame 5, FPS: 0.7, Objects: 0
+Frame 6, FPS: 0.7, Objects: 0
+Frame 7, FPS: 0.7, Objects: 0
+Frame 8, FPS: 0.7, Objects: 0
+Frame 9, FPS: 0.7, Objects: 0
+Frame 10, FPS: 0.7, Objects: 0
+Frame 11, FPS: 0.7, Objects: 0
+Frame 12, FPS: 0.7, Objects: 0
+Frame 13, FPS: 0.7, Objects: 0
+Frame 14, FPS: 0.7, Objects: 0
+Frame 15, FPS: 0.7, Objects: 0
+Frame 16, FPS: 0.7, Objects: 0
+Frame 17, FPS: 0.7, Objects: 0
+Frame 18, FPS: 0.7, Objects: 0
+Frame 19, FPS: 0.7, Objects: 0
+Frame 20, FPS: 0.7, Objects: 0
+Frame 21, FPS: 0.7, Objects: 0
+Frame 22, FPS: 0.7, Objects: 0
+Frame 23, FPS: 0.7, Objects: 0
+Frame 24, FPS: 0.7, Objects: 0
+Frame 25, FPS: 0.7, Objects: 0
+Frame 26, FPS: 0.7, Objects: 0
+Frame 27, FPS: 0.7, Objects: 0
+Frame 28, FPS: 0.7, Objects: 0
+Frame 29, FPS: 0.7, Objects: 0
+Frame 30, FPS: 0.7, Objects: 0
+Frame 31, FPS: 0.7, Objects: 0

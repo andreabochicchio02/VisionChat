@@ -163,7 +163,7 @@ class LLMClient:
             "OBJECTS DETECTED BY CAMERA:\n"
             f"{scene_description}\n\n"
             f"USER MESSAGE: {user_text}\n"
-            "INSTRUCTION: Answer the question taking into account "
+            "INSTRUCTION: Provide a brief, focused answer. Answer the question taking into account "
             "the detected objects, their positions, and the previous conversation."
         )
 
@@ -173,9 +173,9 @@ class LLMClient:
             "stream": True
         }
 
-        print("\nREQUEST", "=" * 25)
+        print("Prompt", "=" * 25)
         print(prompt)
-        print("\nRESPONSE", "=" * 25)
+        print("=" * 25)
 
         full_response = ""
 

@@ -177,7 +177,9 @@ class VoiceAssistant:
                     conf = obj.confidence
 
                     msg = f"Notification: {class_name} detected ({conf:.0f}% confidence) at {pos}."
-                    print(f"\n[NOTIFICATION] {msg} (timestamp: {time.strftime('%H:%M:%S', time.localtime(timestamp))})", flush=True)
+
+                    chat_file = open("chat.txt", "a", encoding="utf-8")
+                    print(f"[NOTIFICATION] {msg} (timestamp: {time.strftime('%H:%M:%S', time.localtime(timestamp))})\n", file=chat_file, flush=True)
 
                     # Speak the notification
                     self.speak_response(msg)
@@ -215,7 +217,7 @@ class VoiceAssistant:
 
         print("Voice Assistant active!")
 
-    def handle_alert_request(self, recognized_text: str, llm: LLMClient) -> bool:
+    def handle_alert_request(self, recognized_text: str, llm: LLMClient) -> str:
         """
         Check whether the recognized text is an alert command and handle it.
         """
@@ -250,14 +252,16 @@ class VoiceAssistant:
             if not response_text:
                 response_text = "I understood you want an alert, but I couldn't identify which object specifically."
 
-            print(response_text)
-            self.speak_response(response_text)
-            return True
+            return response_text
 
-        return False
+        # Not an alert request
+        return ""
 
     def process_user_interaction(self, llm: LLMClient) -> None:
         """Main loop that prompts the user, records speech, and processes requests."""
+
+        # TODO using UI, we could delete this file logging
+        chat_file = open("chat.txt", "a", encoding="utf-8")
 
         try:
             while self.running:
@@ -267,10 +271,13 @@ class VoiceAssistant:
 
                 # If text was recognized, process the request
                 if recognized_text:
-                    print(f"\nRecognized Input: {recognized_text}")
+                    print(f"USER: {recognized_text}", file=chat_file, flush=True)
 
                     # Verify if the user just wants a notification upon object detection
-                    if self.handle_alert_request(recognized_text, llm):
+                    alert_response = self.handle_alert_request(recognized_text, llm)
+                    if alert_response:
+                        print(f"ASSISTANT: {alert_response}\n", file=chat_file, flush=True)
+                        self.speak_response(alert_response)
                         continue
 
                     # Request latest object detections
@@ -278,20 +285,22 @@ class VoiceAssistant:
 
                     # Wait for detection results
                     try:
-                        detected_objects: List[DetectedObject] = self.detection_queue.get(timeout=1)
+                        detected_objects: List[DetectedObject] = self.detection_queue.get(timeout=2)
                     except queue.Empty:
+                        print("Timeout expired waiting for detections")
                         detected_objects = []
-                        print("Detection data not available")
+
+                    print()
 
                     # Generate response
                     response = llm.generate_response(detected_objects, recognized_text)
 
+                    print(f"ASSISTANT: {response}\n", file=chat_file, flush=True)
                     self.speak_response(response)
 
                 else:
                     print("No voice input recognized. Try again")
 
-                print("="*50, "\n")
 
         except KeyboardInterrupt:
             print("User interrupted")
