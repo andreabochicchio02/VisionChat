@@ -38,7 +38,7 @@ def configure_microphone_gain() -> None:
     This is best-effort and non-blocking (does not raise on failure).
     """
     try:
-        subprocess.run(["amixer", "-c", MIC_CARD, "set", MIC_CONTROL_NAME, "100%"], check=False)
+        subprocess.run(["amixer", "-c", MIC_CARD, "set", MIC_CONTROL_NAME, "85%"], check=False)
     except Exception:
         print("Failed to run amixer; continuing without changing mic gain")
 
@@ -319,6 +319,9 @@ class VoiceAssistant:
 
         # Open audio stream
         self.open_audio_stream()
+
+        # Configure audio hardware
+        configure_microphone_gain()
 
         # Enter main interaction loop
         self.process_user_interaction(llm)

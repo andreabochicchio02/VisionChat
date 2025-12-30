@@ -6,10 +6,7 @@ from detected_object_module import object_detection_process
 from voice_assistant_module import VoiceAssistant, configure_microphone_gain
 
 
-def main():
-    # Initialize audio hardware
-    configure_microphone_gain()
-    
+def main():    
     # Create inter-process communication queues
     detection_queue = mp.Queue()
     command_queue = mp.Queue()
