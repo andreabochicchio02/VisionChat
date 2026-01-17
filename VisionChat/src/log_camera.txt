@@ -1,0 +1,11 @@
+Loading DNN model...
+Model loaded
+Initializing camera...
+Camera started
+Frame 1, FPS: 0.6, Objects: 1
+Frame 2, FPS: 0.6, Objects: 1
+Frame 3, FPS: 0.6, Objects: 1
+Frame 4, FPS: 0.7, Objects: 1
+Frame 5, FPS: 0.7, Objects: 1
+  Object 1 | Class: toilet, Confidence: 65.55, Bounding Box: (0.4149397, 0.8916281, 0.7919826, 0.99825615)
+Camera stopped

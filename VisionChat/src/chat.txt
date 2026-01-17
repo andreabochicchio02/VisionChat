@@ -16,3 +16,6 @@ ASSISTANT: Error: unable to connect to Ollama server. Make sure Ollama is runnin
 
 USER: what can you see
 USER: what can you say
+USER: what do you see
+ASSISTANT: Error: unable to connect to Ollama server. Make sure Ollama is running with 'ollama serve'.
+
