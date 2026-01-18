@@ -4,7 +4,7 @@ import sys
 from typing import List, Tuple
 
 # Constants
-URL = "http://10.75.235.144:11434/api/generate"
+URL = "http://10.150.246.144:11434/api/generate"
 MODEL = "llama3.2:3b"
 
 
@@ -49,10 +49,6 @@ class LLMClient:
     def add_alert_object(self, class_name: str) -> None:
         """Add an object class to the alert list"""
         self.alert_object_list.add(class_name)
-
-    def remove_alert_object(self, class_name: str) -> None:
-        """Remove an object class from the alert list"""
-        self.alert_object_list.discard(class_name)
 
     def get_alert_objects(self) -> list:
         """Return current alert object classes as a list"""

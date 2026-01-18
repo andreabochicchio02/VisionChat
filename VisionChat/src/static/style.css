@@ -1,0 +1,199 @@
+/* General Body Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6; /* Light gray/white background */
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Main Container */
+.container {
+    width: 100%;
+    text-align: center;
+}
+
+/* Header Styles */
+h1 {
+    color: #007bff; /* Main Blue Color */
+    margin-bottom: 30px;
+}
+
+/* Layout Wrapper: Aligns Video and Chat horizontally */
+.content-wrapper {
+    display: flex;
+    gap: 30px;
+    align-items: stretch;
+    justify-content: center;
+}
+
+/* --- VIDEO SECTION (Left) --- */
+.video-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 500px;
+}
+
+.video-container {
+    position: relative;
+    border: 4px solid #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #000;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    flex: 1;
+    width: 100%;
+}
+
+#camera-feed {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.status-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: #ff3b30;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    animation: pulse 2s infinite;
+}
+
+/* Controls (Button & Status) */
+.controls {
+    background-color: #f9f9f9;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+#mic-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    width: 60px;
+    height: 60px;
+    font-size: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+}
+
+#mic-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+}
+
+#mic-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* --- CHAT SECTION (Right) --- */
+.chat-section {
+    flex: 1;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    height: 500px; /* Fixed height for scroll */
+    overflow: hidden;
+    border: 1px solid #e1e1e1;
+}
+
+.chat-header {
+    background-color: #007bff; /* Blue Header */
+    color: white;
+    padding: 15px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.chat-log {    
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Message Bubbles Styles */
+.msg {
+    max-width: 80%;
+    padding: 12px 16px;
+    border-radius: 15px;
+    font-size: 15px;
+    line-height: 1.4;
+    position: relative;
+    word-wrap: break-word;
+}
+
+/* User Message: Right side, Blue background */
+.msg.user {
+    align-self: flex-end; 
+    background-color: #007bff;
+    color: white;
+    border-bottom-right-radius: 2px;
+    text-align: right;
+}
+
+/* AI Message: Left side, Gray background */
+.msg.ai {
+    align-self: flex-start;
+    background-color: #e9ecef;
+    color: #333;
+    border-bottom-left-radius: 2px;
+    border: 1px solid #dee2e6;
+    text-align: left;
+}
+
+/* Animations */
+.listening {
+    animation: glow 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 5px #007bff; }
+    to { box-shadow: 0 0 20px #007bff; }
+}
+
+/* Responsive Design: Stack columns on smaller screens */
+@media (max-width: 900px) {
+    .content-wrapper {
+        flex-direction: column;
+    }
+    .video-section, .chat-section {
+        width: 100%;
+        flex: none;
+    }
+}
