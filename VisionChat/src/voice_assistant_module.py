@@ -43,10 +43,8 @@ def text_to_speech(text: str) -> None:
 class VoiceAssistant:
     """Handles speech recognition, alerts and interaction with object detection"""
 
-    def __init__(self, detection_queue: mp.Queue, command_queue: mp.Queue, alert_queue: mp.Queue, ui_notification_queue: queue.Queue):
+    def __init__(self, detection_queue: mp.Queue, ui_notification_queue: queue.Queue):
         self.detection_queue = detection_queue
-        self.command_queue = command_queue
-        self.alert_queue = alert_queue
         self.ui_notification_queue = ui_notification_queue
         
         # Initialize Vosk speech recognition
@@ -72,6 +70,7 @@ class VoiceAssistant:
 
         # Thread for listening to proactive alerts from detection process
         self.alert_thread = None
+        self.alert_enabled = []    # List of class names to report
     
     def find_usb_microphone(self) -> int:
         """Locate USB microphone device"""
@@ -147,30 +146,39 @@ class VoiceAssistant:
         """Background thread that listens for alerts from the object detection process"""
         while self.running:
             try:
-                alert = self.alert_queue.get(timeout=0.5)
+                detection = self.detection_queue.get(timeout=0.5)
 
-                if alert:
-                    obj: DetectedObject = alert['object']
-                    timestamp: float = alert.get('timestamp', time.time())
+                visible_classes = {obj.class_name for obj in detection}
+            
+                for cls in list(visible_classes):
 
-                    class_name = obj.class_name
-                    pos = obj.get_position_description()
-                    conf = obj.confidence
+                    if cls in self.alert_enabled:
+                        # Get the first detected object of this class
+                        obj = next(o for o in detection if o.class_name == cls)
+                        timestamp = time.time()
 
-                    msg = f"Notification: {class_name} detected ({conf:.0f}% confidence) at {pos}."
+                        # Prepare notification message
+                        class_name = obj.class_name
+                        pos = obj.get_position_description()
+                        conf = obj.confidence
+                        msg = f"Notification: {class_name} detected ({conf:.0f}% confidence) at {pos}."
 
-                    print(f"[NOTIFICATION] {msg} (timestamp: {time.strftime('%H:%M:%S', time.localtime(timestamp))})\n", flush=True)
+                        print(f"[NOTIFICATION] {msg} (timestamp: {time.strftime('%H:%M:%S', time.localtime(timestamp))})\n", flush=True)
 
-                    # Send notification to UI queue
-                    try:
-                        self.ui_notification_queue.put({"notification": msg})
-                    except Exception as e:
-                        print(f"Error sending notification to UI: {e}")
+                        # Send notification to the UI queue
+                        try:
+                            self.ui_notification_queue.put({"notification": msg})
+                        except Exception as e:
+                            print(f"Error sending notification to UI: {e}")
 
+                        # Speak the notification
+                        self.speak_response(msg)
 
-                    # Speak the notification
-                    self.speak_response(msg)
+                        # Disable alert for this class to prevent repeated notifications
+                        self.alert_enabled.remove(cls)
+
             except queue.Empty:
+                # No detection available, continue the loop
                 continue
 
     def start_background_services(self):
@@ -213,7 +221,10 @@ class VoiceAssistant:
             valid_objects = [obj for obj in alert_info.get("target_objects", []) if obj in CLASSES]
             
             if valid_objects:
-                self.command_queue.put(("SET_ALERTS", valid_objects))
+                for obj in valid_objects:
+                    if obj not in self.alert_enabled:
+                        self.alert_enabled.append(obj)
+            
                 return f"I will notify you when I see: {', '.join(valid_objects)}."
 
             return "I understood you want an alert, but I don't recognize those objects."
@@ -253,8 +264,7 @@ class VoiceAssistant:
             self.speak_response(alert_resp)
             return
 
-        # 3. Ask for current detections
-        self.command_queue.put("GET_DETECTIONS")
+        # 3. Get latest detected objects
         try:
             detected_objects = self.detection_queue.get(timeout=2)
         except queue.Empty:

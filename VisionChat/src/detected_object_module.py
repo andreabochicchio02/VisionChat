@@ -12,7 +12,6 @@ MODEL_CONFIG = "models/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"
 CONFIDENCE_THRESHOLD = 0.50
 FRAME_SIZE = (640, 480)
 BLOB_SIZE = (320, 320)
-FRAME_DELAY = 0.3
 
 CLASSES = [
     "background", "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat",
@@ -66,24 +65,30 @@ class ObjectDetector:
     def __init__(self):
         self.net = None
         self.camera = None
-        self.latest_detections: List[DetectedObject] = []
-        self.alert_enabled = {}     # class_name -> bool, to manage alerts
         
     def initialize(self) -> None:
         """Initialize the detection model and camera"""
 
         print("Loading DNN model...")
-        self.net = cv2.dnn.readNetFromTensorflow(MODEL_WEIGHTS, MODEL_CONFIG)
-        self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
-        self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
-        print("Model loaded")
+        try:
+            self.net = cv2.dnn.readNetFromTensorflow(MODEL_WEIGHTS, MODEL_CONFIG)
+            print("Net loaded, setting backend...")
+            self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+            self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
+            print("Model loaded")
+        except Exception as e:
+            print("Error loading model:", e)
 
-        print("Initializing camera...")
-        self.camera = Picamera2()
-        self.camera.configure(self.camera.create_video_configuration(main={"size": FRAME_SIZE}))
-        self.camera.start()
-        time.sleep(1)               # Allow camera to warm up
-        print("Camera started")
+        try:
+            print("Initializing camera...")
+            self.camera = Picamera2()
+            self.camera.configure(self.camera.create_video_configuration(main={"size": FRAME_SIZE}))
+            self.camera.start()
+            time.sleep(1)
+            print("Camera started")
+        except Exception as e:
+            print(f"Failed to start camera: {e}", flush=True)
+            return
     
     def capture_and_detect(self):
         """ Capture a frame and perform object detection """
@@ -144,7 +149,7 @@ class ObjectDetector:
             self.camera.stop()
             print("Camera stopped")
 
-def object_detection_process(detection_queue: mp.Queue, command_queue: mp.Queue, alert_queue: mp.Queue, frame_queue: mp.Queue) -> None:
+def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue) -> None:
     """
     Main loop object detection + Video Streaming
     """
@@ -161,32 +166,10 @@ def object_detection_process(detection_queue: mp.Queue, command_queue: mp.Queue,
         start_time = time.time()
         
         while True:
-            # Check for commands from main process
-            try:
-                command = command_queue.get_nowait()
-
-                # STOP command
-                if command == "STOP":
-                    break
-                # Request to send current detections
-                elif command == "GET_DETECTIONS":
-                    detection_queue.put(detector.latest_detections.copy())
-                # Add new alerts
-                elif isinstance(command, tuple) and command[0] == "SET_ALERTS":
-                    for cls in command[1]: 
-                        detector.alert_enabled[cls] = True
-                    print(f"Added alerts: {command[1]}", flush=True)
-                # Remove alerts
-                elif isinstance(command, tuple) and command[0] == "REMOVE_ALERTS":
-                    for cls in command[1]: 
-                        detector.alert_enabled.pop(cls, None)
-                print(f"Removed alerts: {command[1]}", flush=True)
-            except queue.Empty:
-                pass
             
             # Perform detection on current frame
             detections, frame_drawn = detector.capture_and_detect()
-            detector.latest_detections = detections
+            detection_queue.put(detections)
 
             # STREAMING VIDEO HANDLING
             # Encode frame as JPG
@@ -200,44 +183,25 @@ def object_detection_process(detection_queue: mp.Queue, command_queue: mp.Queue,
                         pass
                 frame_queue.put(buffer.tobytes())
 
-            # ALERT VIDEO HANDLING
-            visible_classes = {obj.class_name for obj in detector.latest_detections}
             
-            for cls, enabled in list(detector.alert_enabled.items()):
-                if cls in visible_classes and enabled:
-                    obj = next(o for o in detector.latest_detections if o.class_name == cls)
-                    alert_queue.put({'object': obj, 'timestamp': time.time()})
-
-                    detector.alert_enabled[cls] = False
-                    print(f"Sent alert for {cls}", flush=True)
-                
-                # TODO: può essere utile se vogliamo continuare a ricevere notifiche
-                # elif cls not in visible_classes:
-                #     if not detector.alert_enabled[cls]:
-                #         detector.alert_enabled[cls] = True
-                #         print(f"Re-enabled alert for {cls}", flush=True)
-
 
             # Log performance metrics
             frame_count += 1
             elapsed_time = time.time() - start_time
             fps = frame_count / elapsed_time if elapsed_time > 0 else 0
 
-            print(f"Frame {frame_count}, FPS: {fps:.1f}, Objects: {len(detector.latest_detections)}", flush=True)
+            print(f"Frame {frame_count}, FPS: {fps:.1f}, Objects: {len(detections)}", flush=True)
             
 
             # Every 5 frames, print detailed detections
             if frame_count % 5 == 0:
-                for i, obj in enumerate(detector.latest_detections, start=1):
+                for i, obj in enumerate(detections, start=1):
                     print(
                         f"  Object {i} | Class: {obj.class_name}, "
                         f"Confidence: {obj.confidence:.2f}, "
                         f"Bounding Box: {obj.box}",
                         flush=True
                     )
-
-            # Throttle frame rate to reduce CPU usage
-            time.sleep(FRAME_DELAY)
     
     except Exception as e:
         print(f"Error camera process: {e}")

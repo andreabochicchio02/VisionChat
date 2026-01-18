@@ -14,8 +14,6 @@ app = Flask(__name__)
 
 # Create inter-process communication queues
 detection_queue = mp.Queue()
-command_queue = mp.Queue()
-alert_queue = mp.Queue()
 frame_queue = mp.Queue(maxsize=2)  # Queue for video frames (max 2 to avoid latency)
 
 ui_notification_queue = Queue() # Queue for UI notifications
@@ -103,7 +101,7 @@ def init_system():
     print("Launching object detection process...")
     detection_proc = mp.Process(
         target=object_detection_process,
-        args=(detection_queue, command_queue, alert_queue, frame_queue)
+        args=(detection_queue, frame_queue)
     )
     detection_proc.start()
     
@@ -118,7 +116,7 @@ def init_system():
     time.sleep(3)  # Warmup period
     
     # Start voice assistant in main process
-    assistant = VoiceAssistant(detection_queue, command_queue, alert_queue, ui_notification_queue)
+    assistant = VoiceAssistant(detection_queue, ui_notification_queue)
     assistant.start_background_services()
     print("System Ready.")
 
@@ -132,8 +130,8 @@ if __name__ == "__main__":
         
     finally:
         print("\nShutting down...")
-        command_queue.put("STOP")
         if assistant:
             assistant.stop()
         if detection_proc:
+            detection_proc.terminate()
             detection_proc.join()
