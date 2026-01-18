@@ -43,10 +43,11 @@ def text_to_speech(text: str) -> None:
 class VoiceAssistant:
     """Handles speech recognition, alerts and interaction with object detection"""
 
-    def __init__(self, detection_queue: mp.Queue, command_queue: mp.Queue, alert_queue: mp.Queue):
+    def __init__(self, detection_queue: mp.Queue, command_queue: mp.Queue, alert_queue: mp.Queue, ui_notification_queue: queue.Queue):
         self.detection_queue = detection_queue
         self.command_queue = command_queue
         self.alert_queue = alert_queue
+        self.ui_notification_queue = ui_notification_queue
         
         # Initialize Vosk speech recognition
         print("Loading speech recognition model")
@@ -158,8 +159,14 @@ class VoiceAssistant:
 
                     msg = f"Notification: {class_name} detected ({conf:.0f}% confidence) at {pos}."
 
-                    chat_file = open("chat.txt", "a", encoding="utf-8")
-                    print(f"[NOTIFICATION] {msg} (timestamp: {time.strftime('%H:%M:%S', time.localtime(timestamp))})\n", file=chat_file, flush=True)
+                    print(f"[NOTIFICATION] {msg} (timestamp: {time.strftime('%H:%M:%S', time.localtime(timestamp))})\n", flush=True)
+
+                    # Send notification to UI queue
+                    try:
+                        self.ui_notification_queue.put({"notification": msg})
+                    except Exception as e:
+                        print(f"Error sending notification to UI: {e}")
+
 
                     # Speak the notification
                     self.speak_response(msg)

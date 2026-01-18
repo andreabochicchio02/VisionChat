@@ -210,10 +210,12 @@ def object_detection_process(detection_queue: mp.Queue, command_queue: mp.Queue,
 
                     detector.alert_enabled[cls] = False
                     print(f"Sent alert for {cls}", flush=True)
-                elif cls not in visible_classes:
-                    if not detector.alert_enabled[cls]:
-                        detector.alert_enabled[cls] = True
-                        print(f"Re-enabled alert for {cls}", flush=True)
+                
+                # TODO: può essere utile se vogliamo continuare a ricevere notifiche
+                # elif cls not in visible_classes:
+                #     if not detector.alert_enabled[cls]:
+                #         detector.alert_enabled[cls] = True
+                #         print(f"Re-enabled alert for {cls}", flush=True)
 
 
             # Log performance metrics

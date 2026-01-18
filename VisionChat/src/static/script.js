@@ -23,6 +23,33 @@ document.addEventListener('DOMContentLoaded', () => {
         chatLog.scrollTop = chatLog.scrollHeight;
     }
 
+    // Setup Server-Sent Events for real-time notifications
+    function setupNotifications() {
+        const eventSource = new EventSource('/notifications');
+        
+        eventSource.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                
+                // Display notification as AI message
+                if (data.notification) {
+                    addMessage(data.notification, 'ai');
+                }
+            } catch (e) {
+                console.error('Error parsing notification:', e);
+            }
+        };
+        
+        eventSource.onerror = (error) => {
+            console.error('EventSource error:', error);
+        };
+        
+        console.log('Notification listener started');
+    }
+
+    // Start listening for notifications
+    setupNotifications();
+
     // Event Listener for the microphone button
     btn.addEventListener('click', async () => {
         // Start listening animation
