@@ -155,27 +155,25 @@ class LLMClient:
         try:
             with requests.post(URL, json=payload, stream=True, timeout=10) as response:
                 response.raise_for_status()
-
                 for line in response.iter_lines():
                     if not line:
                         continue
 
-                    try:
-                        chunk = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
+                    chunk = json.loads(line)
 
                     if "response" in chunk:
-                        sys.stdout.write(chunk["response"])
-                        sys.stdout.flush()
-                        full_response += chunk["response"]
+                        token = chunk["response"]
+                        full_response += token
+                        
+                        # Yield each token for streaming to UI
+                        yield token
+                    if chunk.get('done', False):  # Stop if the 'done' flag is True
+                        break
 
                 print("\n")
 
-                # Save interaction
+                # Save interaction after streaming is complete
                 self.add_interaction(user_text, full_response)
-
-                return full_response
 
         except requests.exceptions.ConnectionError:
             error_msg = (
@@ -183,9 +181,9 @@ class LLMClient:
                 "Make sure Ollama is running with 'ollama serve'."
             )
             print(error_msg)
-            return error_msg
+            yield error_msg
 
         except Exception as e:
             error_msg = f"An error occurred: {e}"
             print(error_msg)
-            return error_msg
+            yield error_msg

@@ -299,16 +299,17 @@ class VoiceAssistant:
 
         # 3. Get latest detected objects
         with self.last_detections_lock:
-            detected_objects = list(self.last_detections)
-
-        # 4. Generate response from LLM
-        response = self.llm.generate_response(detected_objects, user_text)
+            detected_objects = list(self.last_detections)        
         
+        full_response_text = ''
+
         # Send assistant response to UI
-        yield {"assistant": response}
+        for token in self.llm.generate_response(detected_objects, user_text):
+            full_response_text += token
+            yield {"token": token}
 
         # 5. Speak the response on Raspberry Pi
-        self.speak_response(response)
+        self.speak_response(full_response_text)
 
     def stop(self):
         """Stop all services and clean up resources"""
