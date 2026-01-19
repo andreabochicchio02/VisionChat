@@ -96,12 +96,17 @@ def notifications():
 def init_system():
     """Initialize the object detection and voice assistant systems"""
     global assistant, detection_proc
+
+    lang = input("Select language (it/en): ").strip().lower()
+    if lang not in ['it', 'en']:
+        print("Invalid language, defaulting to English")
+        lang = 'it'
     
     # Start object detection in separate process
     print("Launching object detection process...")
     detection_proc = mp.Process(
         target=object_detection_process,
-        args=(detection_queue, frame_queue)
+        args=(detection_queue, frame_queue, lang)
     )
     detection_proc.start()
     
@@ -116,7 +121,7 @@ def init_system():
     time.sleep(3)  # Warmup period
     
     # Start voice assistant in main process
-    assistant = VoiceAssistant(detection_queue, ui_notification_queue)
+    assistant = VoiceAssistant(detection_queue, ui_notification_queue, lang)
     assistant.start_background_services()
     print("System Ready.")
 

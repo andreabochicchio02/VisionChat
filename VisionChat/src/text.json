@@ -1,0 +1,79 @@
+{
+  "classes": {
+    "en": [
+      "background", "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat",
+      "traffic light", "fire hydrant", "N/A", "stop sign", "parking meter", "bench", "bird", "cat", "dog",
+      "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "N/A", "backpack", "umbrella",
+      "N/A", "N/A", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite",
+      "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "N/A", "wine glass",
+      "cup", "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot",
+      "hot dog", "pizza", "donut", "cake", "chair", "couch", "potted plant", "bed", "N/A", "dining table",
+      "N/A", "N/A", "toilet", "N/A", "tv", "laptop", "mouse", "remote", "keyboard", "cell phone", "microwave",
+      "oven", "toaster", "sink", "refrigerator", "N/A", "book", "clock", "vase", "scissors", "teddy bear",
+      "hair drier", "toothbrush"
+    ],
+    "it": [
+      "sfondo", "persona", "bicicletta", "auto", "motocicletta", "aeroplano", "autobus", "treno", "camion", "barca",
+      "semaforo", "idrante", "N/A", "segnale di stop", "parcometro", "panchina", "uccello", "gatto", "cane",
+      "cavallo", "pecora", "mucca", "elefante", "orso", "zebra", "giraffa", "N/A", "zaino", "ombrello",
+      "N/A", "N/A", "borsa", "cravatta", "valigia", "frisbee", "sci", "snowboard", "pallone sportivo", "aquilone",
+      "mazza da baseball", "guantone da baseball", "skateboard", "surf", "racchetta da tennis", "bottiglia", "N/A", "bicchiere di vino",
+      "tazza", "forchetta", "coltello", "cucchiaio", "ciotola", "banana", "mela", "panino", "arancia", "broccoli", "carota",
+      "hot dog", "pizza", "ciambella", "torta", "sedia", "divano", "pianta in vaso", "letto", "N/A", "tavolo da pranzo",
+      "N/A", "N/A", "water", "N/A", "tv", "portatile", "mouse", "telecomando", "tastiera", "cellulare", "microonde",
+      "forno", "tostapane", "lavello", "frigorifero", "N/A", "libro", "orologio", "vaso", "forbici", "orsacchiotto",
+      "asciugacapelli", "spazzolino da denti"
+    ]
+  },
+  "positions": {
+    "en": {
+      "v": ["top", "middle", "bottom"],
+      "h": ["left", "center", "right"]
+    },
+    "it": {
+      "v": ["alto", "centro", "basso"],
+      "h": ["sinistra", "centro", "destra"]
+    }
+  },
+  "text": {
+    "en": {
+      "alert_detection": {
+        "user_message": "USER MESSAGE:",
+        "task": "TASK:\nClassify whether the user is asking for a FUTURE notification when objects appear.\n\n DECISION RULES (FOLLOW ALL):\n1. Set \"is_alert_request\" to true ONLY if the user explicitly asks for a future notification.\n2. The message MUST contain clear notification verbs such as:\n   'notify me', 'alert me', 'tell me when'.\n3. Questions about the current scene (e.g. 'what do you see?', 'what is there?') are NOT alert requests.\n4. If there is any doubt, set \"is_alert_request\" to false.\n5. DO NOT guess or invent objects.\n6. Extract target objects ONLY if they are explicitly mentioned in the user message.\n\n OUTPUT FORMAT (JSON ONLY):\n{\n  \"is_alert_request\": true or false,\n  \"target_objects\": [\"object1\", \"object2\"]\n}\n\n EXAMPLES:\nUser: \"What can you see?\"\nOutput:\n{ \"is_alert_request\": false, \"target_objects\": [] }\n\nUser: \"Notify me when you see a dog\"\nOutput:\n{ \"is_alert_request\": true, \"target_objects\": [\"dog\"] }\n\nUser: \"Alert me if a person appears\"\nOutput:\n{ \"is_alert_request\": true, \"target_objects\": [\"person\"] }\n\nUser: \"Do you see a cat?\"\nOutput:\n{ \"is_alert_request\": false, \"target_objects\": [] }\n\n Respond ONLY with valid JSON. No explanations.\n"
+      },
+      "response_generation": {
+        "history_label": "CONVERSATION HISTORY:",
+        "objects_label": "OBJECTS DETECTED BY CAMERA:",
+        "user_message_label": "USER MESSAGE:",
+        "instruction": "INSTRUCTION: Provide a brief, focused answer. Answer the question taking into account the detected objects, their positions, and the previous conversation.",
+        "no_objects": "No objects detected.\n",
+        "position_label": "Position:"
+      },
+      "messages": {
+        "notification": "Notification: {class_name} detected ({conf:.0f}% confidence) at {pos}.",
+        "alert_response": "I will notify you when I see: {objects}.",
+        "alert_no_objects": "I understood you want an alert, but I don't recognize this object.",
+        "no_speech": "No speech detected."
+      }
+    },
+    "it": {
+      "alert_detection": {
+        "user_message": "MESSAGGIO UTENTE:",
+        "task": "COMPITO:\nClassifica se l'utente sta chiedendo una notifica FUTURA quando appaiono oggetti.\n\n REGOLE DI DECISIONE (SEGUI TUTTE):\n1. Imposta \"is_alert_request\" a true SOLO se l'utente chiede esplicitamente una notifica futura.\n2. Il messaggio DEVE contenere chiari verbi di notifica come:\n   'avvisami', 'notificami', 'dimmi quando'.\n3. Domande sulla scena attuale (es. 'cosa vedi?', 'cosa c'è?') NON sono richieste di alert.\n4. In caso di dubbio, imposta \"is_alert_request\" a false.\n5. NON indovinare o inventare oggetti.\n6. Estrai gli oggetti target SOLO se esplicitamente menzionati nel messaggio utente.\n\n FORMATO OUTPUT (SOLO JSON):\n{\n  \"is_alert_request\": true oppure false,\n  \"target_objects\": [\"oggetto1\", \"oggetto2\"]\n}\n\n ESEMPI:\nUtente: \"Cosa vedi?\"\nOutput:\n{ \"is_alert_request\": false, \"target_objects\": [] }\n\nUtente: \"Avvisami quando vedi un cane\"\nOutput:\n{ \"is_alert_request\": true, \"target_objects\": [\"cane\"] }\n\nUtente: \"Notificami se appare una persona\"\nOutput:\n{ \"is_alert_request\": true, \"target_objects\": [\"persona\"] }\n\nUtente: \"Vedi un gatto?\"\nOutput:\n{ \"is_alert_request\": false, \"target_objects\": [] }\n\n Rispondi SOLO con JSON valido. Nessuna spiegazione.\n"
+      },
+      "response_generation": {
+        "history_label": "STORICO CONVERSAZIONE:",
+        "objects_label": "OGGETTI RILEVATI DALLA CAMERA:",
+        "user_message_label": "MESSAGGIO UTENTE:",
+        "instruction": "ISTRUZIONE: Fornisci una risposta breve e mirata. Rispondi alla domanda tenendo conto degli oggetti rilevati, delle loro posizioni e della conversazione precedente.",
+        "no_objects": "Nessun oggetto rilevato.\n",
+        "position_label": "Posizione:"
+      },
+      "messages": {
+        "notification": "Notifica: {class_name} rilevato (confidenza {conf:.0f}%) in posizione {pos}.",
+        "alert_response": "Ti avviserò quando vedrò: {objects}.",
+        "alert_no_objects": "Ho capito che vuoi un avviso, ma non riconosco l'oggetto."
+      }
+    }
+  }
+}

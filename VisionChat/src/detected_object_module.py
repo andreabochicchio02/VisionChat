@@ -4,8 +4,11 @@ import multiprocessing as mp
 import numpy as np
 import cv2
 import sys
+import json
+import os
 from typing import List
 from picamera2 import Picamera2
+
 
 MODEL_WEIGHTS = "models/ssd_mobilenet_v3_large_coco_2020_01_14/frozen_inference_graph.pb"
 MODEL_CONFIG = "models/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"
@@ -13,18 +16,21 @@ CONFIDENCE_THRESHOLD = 0.50
 FRAME_SIZE = (640, 480)
 BLOB_SIZE = (320, 320)
 
-CLASSES = [
-    "background", "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat",
-    "traffic light", "fire hydrant", "N/A", "stop sign", "parking meter", "bench", "bird", "cat", "dog",
-    "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "N/A", "backpack", "umbrella",
-    "N/A", "N/A", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite",
-    "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "N/A", "wine glass",
-    "cup", "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot",
-    "hot dog", "pizza", "donut", "cake", "chair", "couch", "potted plant", "bed", "N/A", "dining table",
-    "N/A", "N/A", "toilet", "N/A", "tv", "laptop", "mouse", "remote", "keyboard", "cell phone", "microwave",
-    "oven", "toaster", "sink", "refrigerator", "N/A", "book", "clock", "vase", "scissors", "teddy bear",
-    "hair drier", "toothbrush"
-]
+
+def load_json_data():
+    """Carica i dati dal file text.json situato nella stessa directory"""
+    try:
+        json_path = os.path.join(os.path.dirname(__file__), 'text.json')
+        with open(json_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Errore critico caricamento text.json: {e}")
+        sys.exit(1)
+
+# Carichiamo i dati globalmente una volta sola all'importazione del modulo
+_JSON = load_json_data()
+POSITIONS = _JSON['positions']
+CLASSES = _JSON['classes']
 
 class DetectedObject:
     def __init__(self, class_name, confidence, bounding_box):
@@ -32,40 +38,41 @@ class DetectedObject:
         self.confidence = confidence
         self.box = bounding_box # (x_min, y_min, x_max, y_max) normalized
 
-    def get_position_description(self) -> str:
-            """Calculate the relative position of the object in the image"""
-            start_x, start_y, end_x, end_y = self.box
-            
-            # Calculate object center
-            center_x = (start_x + end_x) / 2
-            center_y = (start_y + end_y) / 2
-            
-            # Determine horizontal position (assuming normalized coordinates 0-1)
-            if center_x < 0.33:
-                pos_h = "left"
-            elif center_x < 0.67:
-                pos_h = "center"
-            else:
-                pos_h = "right"
-            
-            # Determine vertical position
-            if center_y < 0.33:
-                pos_v = "top"
-            elif center_y < 0.67:
-                pos_v = "middle"
-            else:
-                pos_v = "bottom"
-            
-            return f"{pos_v} {pos_h}"
+    def get_position_description(self, language) -> str:
+        """Calculate the relative position of the object in the image using JSON data"""
+        start_x, start_y, end_x, end_y = self.box
+        
+        # Calculate object center
+        center_x = (start_x + end_x) / 2
+        center_y = (start_y + end_y) / 2
+        
+        # Determine horizontal position index (0=Left, 1=Center, 2=Right)
+        if center_x < 0.33: idx_h = 0
+        elif center_x < 0.67: idx_h = 1
+        else: idx_h = 2
+        
+        # Determine vertical position index (0=Top, 1=Middle, 2=Bottom)
+        if center_y < 0.33: idx_v = 0
+        elif center_y < 0.67: idx_v = 1
+        else: idx_v = 2
+
+        pos_data = POSITIONS[language]
+        
+        pos_v = pos_data['v'][idx_v]
+        pos_h = pos_data['h'][idx_h]
+        
+        return f"{pos_v} {pos_h}"
 
     def __repr__(self) -> str:
         return f"{self.class_name} ({self.confidence:.1f}%)"
 
 class ObjectDetector:
-    def __init__(self):
+    def __init__(self, language: str):
         self.net = None
         self.camera = None
-        
+        self.language = language
+        self.classes = CLASSES[language]
+
     def initialize(self) -> None:
         """Initialize the detection model and camera"""
 
@@ -108,8 +115,6 @@ class ObjectDetector:
         # Each detection:
         #       [0] batch_id, [1] class_id, [2] confidence,
         #       [3] x_min, [4] y_min, [5] x_max, [6] y_max (normalized)
-        
-
         detected_objects = []
         height, width = frame.shape[:2]
 
@@ -119,13 +124,15 @@ class ObjectDetector:
             if confidence > CONFIDENCE_THRESHOLD:
                 class_id = int(detections[0, 0, i, 1])
                 
-                # Validate class ID and skip N/A classes
-                if class_id < len(CLASSES) and CLASSES[class_id] != "N/A":
+                # Usa self.classes pre-caricata
+                if class_id < len(self.classes) and self.classes[class_id] != "N/A":
                     # Extract bounding box coordinates
                     x_min, y_min, x_max, y_max = detections[0, 0, i, 3:7]
                     
+                    class_name_str = self.classes[class_id]
+
                     detected_objects.append(DetectedObject(
-                        class_name=CLASSES[class_id],
+                        class_name=class_name_str,
                         confidence=confidence * 100,
                         bounding_box=(x_min, y_min, x_max, y_max)
                     ))
@@ -139,7 +146,7 @@ class ObjectDetector:
                     cv2.rectangle(frame, (box_x, box_y), (box_x + box_w, box_y + box_h), (0, 255, 0), 2)
                     
                     # Label
-                    label = f"{CLASSES[class_id]}: {confidence*100:.0f}%"
+                    label = f"{class_name_str}: {confidence*100:.0f}%"
                     cv2.putText(frame, label, (box_x, box_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
         return detected_objects, frame
@@ -149,12 +156,12 @@ class ObjectDetector:
             self.camera.stop()
             print("Camera stopped")
 
-def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue) -> None:
+def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue, language: str) -> None:
     """
     Main loop object detection + Video Streaming
     """
 
-    detector = ObjectDetector()
+    detector = ObjectDetector(language)
     f = open('log_camera.txt', 'w')
     sys.stdout = f
     
@@ -184,7 +191,6 @@ def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue) -
                 frame_queue.put(buffer.tobytes())
 
             
-
             # Log performance metrics
             frame_count += 1
             elapsed_time = time.time() - start_time

@@ -1,21 +1,33 @@
 import requests
 import json
 import sys
+import os
 from typing import List, Tuple
 
 # Constants
 URL = "http://10.150.246.144:11434/api/generate"
 MODEL = "llama3.2:3b"
 
+# Load prompts from JSON file
+def load_prompts():
+    """Load language-specific prompts from JSON file"""
+    prompts_path = os.path.join(os.path.dirname(__file__), 'text.json')
+    with open(prompts_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    return {lang: data['text'][lang] for lang in data['text']}
+
+PROMPTS = load_prompts()
+
 
 class LLMClient:
-    def __init__(self, max_history: int = 5):
+    def __init__(self, lang: str, max_history: int = 3):
         """
         LLM client with conversation memory (last N question/answer pairs)
         """
         self.max_history = max_history
         self.history: List[Tuple[str, str]] = []    # (user_question, llm_answer)
         self.alert_object_list = set()              # Stored as a set of class names (strings)
+        self.language = lang                        # en or it
 
 
     def add_interaction(self, user_question: str, llm_answer: str) -> None:
@@ -60,48 +72,13 @@ class LLMClient:
         Returns: dict with 'is_alert_request', 'response', and 'target_objects'
         """
 
+        p = PROMPTS[self.language]['alert_detection']
+        
         prompt = (
-            f"USER MESSAGE: \"{user_text}\"\n"
-
-            "TASK:\n"
-            "Classify whether the user is asking for a FUTURE notification when objects appear.\n\n"
-
-            "DECISION RULES (FOLLOW ALL):\n"
-            "1. Set \"is_alert_request\" to true ONLY if the user explicitly asks for a future notification.\n"
-            "2. The message MUST contain clear notification verbs such as:\n"
-            "   'notify me', 'alert me', 'tell me when'.\n"
-            "3. Questions about the current scene (e.g. 'what do you see?', 'what is there?') are NOT alert requests.\n"
-            "4. If there is any doubt, set \"is_alert_request\" to false.\n"
-            "5. DO NOT guess or invent objects.\n"
-            "6. Extract target objects ONLY if they are explicitly mentioned in the user message.\n\n"
-
-            "OUTPUT FORMAT (JSON ONLY):\n"
-            "{\n"
-            '  "is_alert_request": true or false,\n'
-            '  "target_objects": ["object1", "object2"]\n'
-            "}\n\n"
-
-            "EXAMPLES:\n"
-            "User: \"What can you see?\"\n"
-            "Output:\n"
-            "{ \"is_alert_request\": false, \"target_objects\": [] }\n\n"
-
-            "User: \"Notify me when you see a dog\"\n"
-            "Output:\n"
-            "{ \"is_alert_request\": true, \"target_objects\": [\"dog\"] }\n\n"
-
-            "User: \"Alert me if a person appears\"\n"
-            "Output:\n"
-            "{ \"is_alert_request\": true, \"target_objects\": [\"person\"] }\n\n"
-
-            "User: \"Do you see a cat?\"\n"
-            "Output:\n"
-            "{ \"is_alert_request\": false, \"target_objects\": [] }\n\n"
-
-            "Respond ONLY with valid JSON. No explanations.\n"
-            f"USER MESSAGE: \"{user_text}\"\n"
+            f"{p['user_message']} \"{user_text}\"\n"
+            f"{p['task']}"
+            f"{p['user_message']} \"{user_text}\"\n"
         )
-
 
         payload = {
             "model": MODEL,
@@ -111,7 +88,7 @@ class LLMClient:
         }
 
         try:
-            response = requests.post(URL, json=payload, timeout=15)
+            response = requests.post(URL, json=payload, timeout=10)
             response.raise_for_status()
 
             raw = response.json()
@@ -139,28 +116,28 @@ class LLMClient:
         """
         Generate a response based on detected objects and conversation history
         """
+        p = PROMPTS[self.language]['response_generation']
 
         # Build scene description
         scene_description = ""
         if objects:
             for i, obj in enumerate(objects, 1):
-                position = obj.get_position_description()
-                scene_description += f"{i}. {obj.class_name} - Position: {position}\n"
+                position = obj.get_position_description(self.language)
+                scene_description += f"{i}. {obj.class_name} - {p['position_label']} {position}\n"
         else:
-            scene_description += "No objects detected.\n"
+            scene_description += p['no_objects']
 
         # Conversation history
         conversation_history = self.get_formatted_history()
 
         # Final prompt
         prompt = (
-            "CONVERSATION HISTORY:\n"
+            f"{p['history_label']}\n"
             f"{conversation_history}\n\n"
-            "OBJECTS DETECTED BY CAMERA:\n"
+            f"{p['objects_label']}\n"
             f"{scene_description}\n\n"
-            f"USER MESSAGE: {user_text}\n"
-            "INSTRUCTION: Provide a brief, focused answer. Answer the question taking into account "
-            "the detected objects, their positions, and the previous conversation."
+            f"{p['user_message_label']} {user_text}\n"
+            f"{p['instruction']}"
         )
 
         payload = {
@@ -176,7 +153,7 @@ class LLMClient:
         full_response = ""
 
         try:
-            with requests.post(URL, json=payload, stream=True, timeout=30) as response:
+            with requests.post(URL, json=payload, stream=True, timeout=10) as response:
                 response.raise_for_status()
 
                 for line in response.iter_lines():

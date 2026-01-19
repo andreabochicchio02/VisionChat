@@ -4,10 +4,11 @@ import threading
 import time
 import queue
 import multiprocessing as mp
-from typing import List
 import pyaudio
 import requests
 import sys
+import os
+from typing import List
 from vosk import Model, KaldiRecognizer
 
 from detected_object_module import DetectedObject, CLASSES
@@ -18,7 +19,20 @@ RATE = 44100
 CHUNK = 4096
 MIC_CARD = "1"
 MIC_CONTROL_NAME = "Mic"
-VOSK_MODEL_PATH = "models/vosk-model-small-en-us-0.15"
+VOSK_MODEL_PATH = {
+    "en": "models/vosk-model-small-en-us-0.15",
+    "it": "models/vosk-model-small-it-0.22",
+}
+
+# Load messages from JSON file
+def load_messages():
+    """Load language-specific messages from JSON file"""
+    prompts_path = os.path.join(os.path.dirname(__file__), 'text.json')
+    with open(prompts_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    return {lang: data['text'][lang]['messages'] for lang in data['text']}
+
+MESSAGES = load_messages()
 
 def configure_microphone_gain() -> None:
     """
@@ -30,26 +44,33 @@ def configure_microphone_gain() -> None:
     except Exception:
         pass
 
-def text_to_speech(text: str) -> None:
-    """
-    Synthesize speech with espeak (blocking until finished).
-    Keeps stdout/stderr quiet by redirecting to DEVNULL.
-    """
+
+def text_to_speech_IT(text: str) -> None:
     try:
-        subprocess.run(["espeak", "-v", "en-us", "-s", "140", text], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["pico2wave", "-l", "it-IT", "-w", "/tmp/tts.wav", text], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL )
+        subprocess.run(["aplay", "/tmp/tts.wav"], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception:
-        print("Failed to run espeak")
+        print("Failed to run pico TTS")
+
+def text_to_speech_EN(text: str) -> None:
+    try:
+        subprocess.run(["pico2wave", "-l", "en-US", "-w", "/tmp/tts.wav", text], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL )
+        subprocess.run(["aplay", "/tmp/tts.wav"], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        print("Failed to run pico TTS")
+
 
 class VoiceAssistant:
     """Handles speech recognition, alerts and interaction with object detection"""
 
-    def __init__(self, detection_queue: mp.Queue, ui_notification_queue: queue.Queue):
+    def __init__(self, detection_queue: mp.Queue, ui_notification_queue: queue.Queue, lang: str):
         self.detection_queue = detection_queue
         self.ui_notification_queue = ui_notification_queue
+        self.language = lang
         
         # Initialize Vosk speech recognition
         print("Loading speech recognition model")
-        self.model = Model(VOSK_MODEL_PATH)                     # Load Vosk speech recognition model
+        self.model = Model(VOSK_MODEL_PATH[self.language])      # Load Vosk speech recognition model
         self.recognizer = KaldiRecognizer(self.model, RATE)     # Create recognizer with sample rate
         self.recognizer.SetWords(True)                          # Enable word-level recognition
 
@@ -63,7 +84,7 @@ class VoiceAssistant:
         self.listening = False
 
         # Initialize LLM client
-        self.llm = LLMClient()
+        self.llm = LLMClient(self.language)
 
         # Find and configure microphone
         self.mic_index = self.find_usb_microphone()
@@ -71,6 +92,13 @@ class VoiceAssistant:
         # Thread for listening to proactive alerts from detection process
         self.alert_thread = None
         self.alert_enabled = []    # List of class names to report
+
+
+        # Stores the most recent object detections received from the vision process.
+        # Required because detections are updated by the listener thread
+        # and read by other threads (e.g. LLM interaction), preventing race conditions.
+        self.last_detections = []
+        self.last_detections_lock = threading.Lock()
     
     def find_usb_microphone(self) -> int:
         """Locate USB microphone device"""
@@ -138,32 +166,37 @@ class VoiceAssistant:
         return recognized_text
     
     def speak_response(self, text: str) -> None:
-        """Speak a response and pause audio processing during speech"""
-        text_to_speech(text)
+        if self.language == "it":
+            text_to_speech_IT(text)
+        else:
+            text_to_speech_EN(text)
         print("Speech complete")
 
-    def alert_listener(self) -> None:
+    def listener(self) -> None:
         """Background thread that listens for alerts from the object detection process"""
         while self.running:
             try:
                 detection = self.detection_queue.get(timeout=0.5)
 
+                # Required lock because detections are shared by the listener thread
+                # and other thread (e.g. LLM interaction)
+                with self.last_detections_lock:
+                    self.last_detections = detection
+
                 visible_classes = {obj.class_name for obj in detection}
             
                 for cls in list(visible_classes):
-
                     if cls in self.alert_enabled:
                         # Get the first detected object of this class
                         obj = next(o for o in detection if o.class_name == cls)
-                        timestamp = time.time()
 
-                        # Prepare notification message
-                        class_name = obj.class_name
-                        pos = obj.get_position_description()
-                        conf = obj.confidence
-                        msg = f"Notification: {class_name} detected ({conf:.0f}% confidence) at {pos}."
+                        msg = MESSAGES[self.language]['notification'].format(
+                            class_name=obj.class_name,
+                            conf=obj.confidence,
+                            pos=obj.get_position_description(self.language)
+                        )
 
-                        print(f"[NOTIFICATION] {msg} (timestamp: {time.strftime('%H:%M:%S', time.localtime(timestamp))})\n", flush=True)
+                        print(f"[NOTIFICATION] {msg}\n", flush=True)
 
                         # Send notification to the UI queue
                         try:
@@ -190,7 +223,7 @@ class VoiceAssistant:
 
     def start_alert_listener_thread(self) -> None:
         """Start background thread to listen for proactive alerts."""
-        self.alert_thread = threading.Thread(target=self.alert_listener, daemon=True)
+        self.alert_thread = threading.Thread(target=self.listener, daemon=True)
         self.alert_thread.start()
 
     def open_audio_stream(self) -> None:
@@ -218,16 +251,18 @@ class VoiceAssistant:
         alert_info = self.llm.detect_alert_request(recognized_text)
         
         if isinstance(alert_info, dict) and alert_info.get("is_alert_request"):
-            valid_objects = [obj for obj in alert_info.get("target_objects", []) if obj in CLASSES]
+            valid_objects = [obj for obj in alert_info.get("target_objects", []) if obj in CLASSES[self.language]]
             
             if valid_objects:
                 for obj in valid_objects:
                     if obj not in self.alert_enabled:
                         self.alert_enabled.append(obj)
             
-                return f"I will notify you when I see: {', '.join(valid_objects)}."
+                return MESSAGES[self.language]['alert_response'].format(
+                    objects=', '.join(valid_objects)
+                )
 
-            return "I understood you want an alert, but I don't recognize those objects."
+            return MESSAGES[self.language]['alert_no_objects']
         return ""
 
     def process_single_interaction_streaming(self):
@@ -249,8 +284,6 @@ class VoiceAssistant:
             yield {"error": "No speech detected."}
             return
 
-        print(f"User said: {user_text}")
-
         # Send user text to UI immediately after recognition
         yield {"user": user_text}
 
@@ -265,10 +298,8 @@ class VoiceAssistant:
             return
 
         # 3. Get latest detected objects
-        try:
-            detected_objects = self.detection_queue.get(timeout=2)
-        except queue.Empty:
-            detected_objects = []
+        with self.last_detections_lock:
+            detected_objects = list(self.last_detections)
 
         # 4. Generate response from LLM
         response = self.llm.generate_response(detected_objects, user_text)
