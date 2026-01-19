@@ -11,19 +11,16 @@ body {
     box-sizing: border-box;
 }
 
-/* Main Container */
 .container {
     width: 100%;
     text-align: center;
 }
 
-/* Header Styles */
 h1 {
     color: #007bff;
     margin-bottom: 30px;
 }
 
-/* Layout Wrapper */
 .content-wrapper {
     display: flex;
     gap: 30px;
@@ -101,7 +98,6 @@ h1 {
     pointer-events: none;
 }
 
-/* Animazione pulsante in ascolto */
 .listening::before {
     content: '';
     position: absolute;
@@ -157,7 +153,6 @@ h1 {
     gap: 15px;
 }
 
-/* Message Bubbles */
 .msg {
     max-width: 80%;
     padding: 12px 16px;

@@ -45,7 +45,7 @@
         "history_label": "CONVERSATION HISTORY:",
         "objects_label": "OBJECTS DETECTED BY CAMERA:",
         "user_message_label": "USER MESSAGE:",
-        "instruction": "INSTRUCTION: Provide a brief, focused answer. Answer the question taking into account the detected objects, their positions, and the previous conversation.",
+        "instruction": "INSTRUCTION: Provide a brief and focused answer. Use conversation history only if explicitly requested, and refer to objects detected by the camera only if explicitly mentioned in the question.",
         "no_objects": "No objects detected.\n",
         "position_label": "Position:"
       },
@@ -62,10 +62,10 @@
         "task": "COMPITO:\nClassifica se l'utente sta chiedendo una notifica FUTURA quando appaiono oggetti.\n\n REGOLE DI DECISIONE (SEGUI TUTTE):\n1. Imposta \"is_alert_request\" a true SOLO se l'utente chiede esplicitamente una notifica futura.\n2. Il messaggio DEVE contenere chiari verbi di notifica come:\n   'avvisami', 'notificami', 'dimmi quando'.\n3. Domande sulla scena attuale (es. 'cosa vedi?', 'cosa c'è?') NON sono richieste di alert.\n4. In caso di dubbio, imposta \"is_alert_request\" a false.\n5. NON indovinare o inventare oggetti.\n6. Estrai gli oggetti target SOLO se esplicitamente menzionati nel messaggio utente.\n\n FORMATO OUTPUT (SOLO JSON):\n{\n  \"is_alert_request\": true oppure false,\n  \"target_objects\": [\"oggetto1\", \"oggetto2\"]\n}\n\n ESEMPI:\nUtente: \"Cosa vedi?\"\nOutput:\n{ \"is_alert_request\": false, \"target_objects\": [] }\n\nUtente: \"Avvisami quando vedi un cane\"\nOutput:\n{ \"is_alert_request\": true, \"target_objects\": [\"cane\"] }\n\nUtente: \"Notificami se appare una persona\"\nOutput:\n{ \"is_alert_request\": true, \"target_objects\": [\"persona\"] }\n\nUtente: \"Vedi un gatto?\"\nOutput:\n{ \"is_alert_request\": false, \"target_objects\": [] }\n\n Rispondi SOLO con JSON valido. Nessuna spiegazione.\n"
       },
       "response_generation": {
-        "history_label": "STORICO CONVERSAZIONE:",
-        "objects_label": "OGGETTI RILEVATI DALLA CAMERA:",
-        "user_message_label": "MESSAGGIO UTENTE:",
-        "instruction": "ISTRUZIONE: Fornisci una risposta breve e mirata. Rispondi alla domanda tenendo conto degli oggetti rilevati, delle loro posizioni e della conversazione precedente.",
+        "history_label": "STORIA DELLA CONVERSAZIONE:",
+        "objects_label": "IN QUESTO MOMENTO STAI VEDENDO QUESTI OGGETTI:",
+        "user_message_label": "MESSAGGIO DELL'UTENTE:",
+        "instruction": "ISTRUZIONE: Fornisci una risposta breve. Se l'utente ti chiede cosa stai vedendo, fai riferimento agli oggetti che ti ho elencato. Usa la storia della conversazione solo se espressamente richiesto.",
         "no_objects": "Nessun oggetto rilevato.\n",
         "position_label": "Posizione:"
       },

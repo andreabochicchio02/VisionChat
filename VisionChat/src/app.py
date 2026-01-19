@@ -13,8 +13,8 @@ from voice_assistant_module import VoiceAssistant
 app = Flask(__name__)
 
 # Create inter-process communication queues
-detection_queue = mp.Queue()
-frame_queue = mp.Queue(maxsize=2)  # Queue for video frames (max 2 to avoid latency)
+detection_queue = mp.Queue()            # Queue for object detected
+frame_queue = mp.Queue()                # Queue for video frames
 
 ui_notification_queue = Queue() # Queue for UI notifications
 
@@ -109,14 +109,6 @@ def init_system():
         args=(detection_queue, frame_queue, lang)
     )
     detection_proc.start()
-    
-    # Pin detection process to specific CPU core for better performance
-    try:
-        proc = psutil.Process(detection_proc.pid)
-        proc.cpu_affinity([1])  # Force detection process to use only CPU core 1
-    except Exception as e:
-        print(f"Could not set CPU affinity: {e}")
-        pass
     
     time.sleep(3)  # Warmup period
     

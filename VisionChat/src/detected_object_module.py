@@ -69,9 +69,18 @@ class DetectedObject:
 class ObjectDetector:
     def __init__(self, language: str):
         self.net = None
-        self.camera = None
         self.language = language
         self.classes = CLASSES[language]
+
+        try:
+            print("Initializing camera...")
+            self.camera = Picamera2()
+            self.camera.configure(self.camera.create_video_configuration(main={"size": FRAME_SIZE}))
+            self.camera.start()
+            print("Camera started")
+        except Exception as e:
+            print(f"Failed to start camera: {e}", flush=True)
+            return
 
     def initialize(self) -> None:
         """Initialize the detection model and camera"""
@@ -86,16 +95,6 @@ class ObjectDetector:
         except Exception as e:
             print("Error loading model:", e)
 
-        try:
-            print("Initializing camera...")
-            self.camera = Picamera2()
-            self.camera.configure(self.camera.create_video_configuration(main={"size": FRAME_SIZE}))
-            self.camera.start()
-            time.sleep(1)
-            print("Camera started")
-        except Exception as e:
-            print(f"Failed to start camera: {e}", flush=True)
-            return
     
     def capture_and_detect(self):
         """ Capture a frame and perform object detection """

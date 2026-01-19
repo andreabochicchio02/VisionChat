@@ -5,8 +5,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function addMessage(text, sender) {
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('msg', sender);
-        // user -> textContent, ai -> allow tokens appended as text nodes
-        messageDiv.textContent = text;
+        
+        if(sender === 'ai') {
+             messageDiv.innerHTML = text; 
+        } else {
+             messageDiv.textContent = text;
+        }
         chatLog.appendChild(messageDiv);
         chatLog.scrollTop = chatLog.scrollHeight;
         return messageDiv;
@@ -31,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const decoder = new TextDecoder();
             let buffer = '';
 
-            // Important: keep this outside the loop so we continue appending across chunks
+            // Keep this outside the loop so we continue appending across chunks
             let currentStreamMessage = null;
 
             while (true) {
@@ -41,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 buffer += decoder.decode(value, { stream: true });
 
                 const lines = buffer.split('\n');
-                buffer = lines.pop(); // incomplete line stays in buffer
+                buffer = lines.pop();
 
                 for (const line of lines) {
                     if (!line.trim()) continue;
@@ -52,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             // stop listening animation as soon as we get recognized user text
                             btn.classList.remove('listening');
                             btn.innerHTML = "🎤";
+                            
                             addMessage(data.user, 'user');
                         }
 
@@ -77,21 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // // process any remaining buffer after stream end
-            // if (buffer.trim()) {
-            //     try {
-            //         const data = JSON.parse(buffer);
-            //         if (data.user) addMessage(data.user, 'user');
-            //         if (data.assistant) addMessage(data.assistant, 'ai');
-            //         if (data.token) {
-            //             if (!currentStreamMessage) currentStreamMessage = addMessage("", "ai");
-            //             currentStreamMessage.appendChild(document.createTextNode(data.token));
-            //         }
-            //     } catch (e) {
-            //         console.warn('Leftover buffer not valid JSON:', e, buffer);
-            //     }
-            // }
-
             // Reset button state
             btn.disabled = false;
             btn.classList.remove('listening');
@@ -110,13 +100,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // attach handler
     btn.addEventListener('click', handleListenClick);
 
-    // Notifications (unchanged)
+    // Notifications
     function setupNotifications() {
         const eventSource = new EventSource('/notifications');
         eventSource.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                if (data.notification) addMessage(data.notification, 'ai');
+                if (data.notification) {
+                    addMessage(data.notification, 'ai');
+                }
             } catch (e) {
                 console.error('Error parsing notification:', e);
             }
