@@ -61,46 +61,47 @@ class LLMClient:
         """
 
         prompt = (
-            f"USER MESSAGE: \"{user_text}\"\n"
+            f"MESSAGE UTENTE: \"{user_text}\"\n"
 
-            "TASK:\n"
-            "Classify whether the user is asking for a FUTURE notification when objects appear.\n\n"
+            "COMPITO:\n"
+            "Classifica se l'utente sta chiedendo una NOTIFICA FUTURA quando compaiono degli oggetti.\n\n"
 
-            "DECISION RULES (FOLLOW ALL):\n"
-            "1. Set \"is_alert_request\" to true ONLY if the user explicitly asks for a future notification.\n"
-            "2. The message MUST contain clear notification verbs such as:\n"
-            "   'notify me', 'alert me', 'tell me when'.\n"
-            "3. Questions about the current scene (e.g. 'what do you see?', 'what is there?') are NOT alert requests.\n"
-            "4. If there is any doubt, set \"is_alert_request\" to false.\n"
-            "5. DO NOT guess or invent objects.\n"
-            "6. Extract target objects ONLY if they are explicitly mentioned in the user message.\n\n"
+            "REGOLE DI DECISIONE (SEGUI TUTTE):\n"
+            "1. Imposta \"is_alert_request\" su true SOLO se l'utente chiede esplicitamente una notifica futura.\n"
+            "2. Il messaggio DEVE contenere verbi chiari di notifica come:\n"
+            "   'avvisami', 'notificami', 'dimmi quando'.\n"
+            "3. Domande sulla scena attuale (es. 'cosa vedi?', 'cosa c'è?') NON sono richieste di notifica.\n"
+            "4. In caso di dubbio, imposta \"is_alert_request\" su false.\n"
+            "5. NON indovinare o inventare oggetti.\n"
+            "6. Estrai gli oggetti target SOLO se sono esplicitamente menzionati nel messaggio dell'utente.\n\n"
 
-            "OUTPUT FORMAT (JSON ONLY):\n"
+            "FORMATO OUTPUT (SOLO JSON):\n"
             "{\n"
-            '  "is_alert_request": true or false,\n'
-            '  "target_objects": ["object1", "object2"]\n'
+            '  "is_alert_request": true o false,\n'
+            '  "target_objects": ["oggetto1", "oggetto2"]\n'
             "}\n\n"
 
-            "EXAMPLES:\n"
-            "User: \"What can you see?\"\n"
+            "ESEMPI:\n"
+            "Utente: \"Cosa puoi vedere?\"\n"
             "Output:\n"
             "{ \"is_alert_request\": false, \"target_objects\": [] }\n\n"
 
-            "User: \"Notify me when you see a dog\"\n"
+            "Utente: \"Notificami quando vedi un cane\"\n"
             "Output:\n"
-            "{ \"is_alert_request\": true, \"target_objects\": [\"dog\"] }\n\n"
+            "{ \"is_alert_request\": true, \"target_objects\": [\"cane\"] }\n\n"
 
-            "User: \"Alert me if a person appears\"\n"
+            "Utente: \"Avvisami se appare una persona\"\n"
             "Output:\n"
-            "{ \"is_alert_request\": true, \"target_objects\": [\"person\"] }\n\n"
+            "{ \"is_alert_request\": true, \"target_objects\": [\"persona\"] }\n\n"
 
-            "User: \"Do you see a cat?\"\n"
+            "Utente: \"Vedi un gatto?\"\n"
             "Output:\n"
             "{ \"is_alert_request\": false, \"target_objects\": [] }\n\n"
 
-            "Respond ONLY with valid JSON. No explanations.\n"
-            f"USER MESSAGE: \"{user_text}\"\n"
+            "Rispondi SOLO con JSON valido. Nessuna spiegazione.\n"
+            f"MESSAGE UTENTE: \"{user_text}\"\n"
         )
+
 
 
         payload = {
@@ -152,15 +153,14 @@ class LLMClient:
         # Conversation history
         conversation_history = self.get_formatted_history()
 
-        # Final prompt
         prompt = (
-            "CONVERSATION HISTORY:\n"
+            "STORIA DELLA CONVERSAZIONE:\n"
             f"{conversation_history}\n\n"
-            "OBJECTS DETECTED BY CAMERA:\n"
+            "OGGETTI RILEVATI DALLA TELECAMERA:\n"
             f"{scene_description}\n\n"
-            f"USER MESSAGE: {user_text}\n"
-            "INSTRUCTION: Provide a brief, focused answer. Answer the question taking into account "
-            "the detected objects, their positions, and the previous conversation."
+            f"MESSAGGIO DELL'UTENTE: {user_text}\n"
+            "ISTRUZIONE: Fornisci una risposta breve e mirata. Rispondi alla domanda considerando "
+            "gli oggetti rilevati, le loro posizioni e la conversazione precedente."
         )
 
         payload = {

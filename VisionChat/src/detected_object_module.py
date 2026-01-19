@@ -13,17 +13,30 @@ CONFIDENCE_THRESHOLD = 0.50
 FRAME_SIZE = (640, 480)
 BLOB_SIZE = (320, 320)
 
+# CLASSES = [
+#     "background", "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat",
+#     "traffic light", "fire hydrant", "N/A", "stop sign", "parking meter", "bench", "bird", "cat", "dog",
+#     "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "N/A", "backpack", "umbrella",
+#     "N/A", "N/A", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite",
+#     "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "N/A", "wine glass",
+#     "cup", "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot",
+#     "hot dog", "pizza", "donut", "cake", "chair", "couch", "potted plant", "bed", "N/A", "dining table",
+#     "N/A", "N/A", "toilet", "N/A", "tv", "laptop", "mouse", "remote", "keyboard", "cell phone", "microwave",
+#     "oven", "toaster", "sink", "refrigerator", "N/A", "book", "clock", "vase", "scissors", "teddy bear",
+#     "hair drier", "toothbrush"
+# ]
+
 CLASSES = [
-    "background", "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat",
-    "traffic light", "fire hydrant", "N/A", "stop sign", "parking meter", "bench", "bird", "cat", "dog",
-    "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "N/A", "backpack", "umbrella",
-    "N/A", "N/A", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite",
-    "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "N/A", "wine glass",
-    "cup", "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot",
-    "hot dog", "pizza", "donut", "cake", "chair", "couch", "potted plant", "bed", "N/A", "dining table",
-    "N/A", "N/A", "toilet", "N/A", "tv", "laptop", "mouse", "remote", "keyboard", "cell phone", "microwave",
-    "oven", "toaster", "sink", "refrigerator", "N/A", "book", "clock", "vase", "scissors", "teddy bear",
-    "hair drier", "toothbrush"
+    "sfondo", "persona", "bicicletta", "auto", "motocicletta", "aeroplano", "autobus", "treno", "camion", "barca",
+    "semaforo", "idrante", "N/A", "segnale di stop", "parcometro", "panchina", "uccello", "gatto", "cane",
+    "cavallo", "pecora", "mucca", "elefante", "orso", "zebra", "giraffa", "N/A", "zaino", "ombrello",
+    "N/A", "N/A", "borsa", "cravatta", "valigia", "frisbee", "sci", "snowboard", "pallone sportivo", "aquilone",
+    "mazza da baseball", "guantone da baseball", "skateboard", "surf", "racchetta da tennis", "bottiglia", "N/A", "bicchiere di vino",
+    "tazza", "forchetta", "coltello", "cucchiaio", "ciotola", "banana", "mela", "panino", "arancia", "broccoli", "carota",
+    "hot dog", "pizza", "ciambella", "torta", "sedia", "divano", "pianta in vaso", "letto", "N/A", "tavolo da pranzo",
+    "N/A", "N/A", "water", "N/A", "tv", "portatile", "mouse", "telecomando", "tastiera", "cellulare", "microonde",
+    "forno", "tostapane", "lavello", "frigorifero", "N/A", "libro", "orologio", "vaso", "forbici", "orsacchiotto",
+    "asciugacapelli", "spazzolino da denti"
 ]
 
 class DetectedObject:

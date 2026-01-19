@@ -106,12 +106,12 @@ def init_system():
     detection_proc.start()
     
     # Pin detection process to specific CPU core for better performance
-    try:
-        proc = psutil.Process(detection_proc.pid)
-        proc.cpu_affinity([1])  # Force detection process to use only CPU core 1
-    except Exception as e:
-        print(f"Could not set CPU affinity: {e}")
-        pass
+    # try:
+    #     proc = psutil.Process(detection_proc.pid)
+    #     proc.cpu_affinity([1])  # Force detection process to use only CPU core 1
+    # except Exception as e:
+    #     print(f"Could not set CPU affinity: {e}")
+    #     pass
     
     time.sleep(3)  # Warmup period
     

@@ -18,7 +18,7 @@ RATE = 44100
 CHUNK = 4096
 MIC_CARD = "1"
 MIC_CONTROL_NAME = "Mic"
-VOSK_MODEL_PATH = "models/vosk-model-small-en-us-0.15"
+VOSK_MODEL_PATH = "models/vosk-model-small-it-0.22"
 
 def configure_microphone_gain() -> None:
     """
