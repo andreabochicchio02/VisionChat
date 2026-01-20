@@ -1,12 +1,12 @@
 import time
 import queue
 import multiprocessing as mp
-import numpy as np
 import cv2
 import sys
 import json
 import os
-from typing import List
+import numpy as np
+from typing import List, Tuple
 from picamera2 import Picamera2
 
 
@@ -17,14 +17,14 @@ FRAME_SIZE = (640, 480)
 BLOB_SIZE = (320, 320)
 
 
-def load_json_data():
-    """Carica i dati dal file text.json situato nella stessa directory"""
+def load_json_data() -> dict:
+    """Load localization JSON (`text.json`) from the module directory."""
     try:
         json_path = os.path.join(os.path.dirname(__file__), 'text.json')
         with open(json_path, 'r', encoding='utf-8') as f:
             return json.load(f)
     except Exception as e:
-        print(f"Errore critico caricamento text.json: {e}")
+        print(f"Critical error loading text.json: {e}")
         sys.exit(1)
 
 # Carichiamo i dati globalmente una volta sola all'importazione del modulo
@@ -33,13 +33,16 @@ POSITIONS = _JSON['positions']
 CLASSES = _JSON['classes']
 
 class DetectedObject:
-    def __init__(self, class_name, confidence, bounding_box):
+    """Small container representing one detected object."""
+    
+    def __init__(self, class_name: str, confidence: float, bounding_box: Tuple[float, float, float, float]):
         self.class_name = class_name
         self.confidence = confidence
-        self.box = bounding_box # (x_min, y_min, x_max, y_max) normalized
+        self.box = bounding_box  # (x_min, y_min, x_max, y_max) normalized
 
-    def get_position_description(self, language) -> str:
-        """Calculate the relative position of the object in the image using JSON data"""
+    def get_position_description(self, language: str) -> str:
+        """Return a short localized position"""
+        
         start_x, start_y, end_x, end_y = self.box
         
         # Calculate object center
@@ -56,21 +59,20 @@ class DetectedObject:
         elif center_y < 0.67: idx_v = 1
         else: idx_v = 2
 
-        pos_data = POSITIONS[language]
-        
+        pos_data = POSITIONS.get(language)
         pos_v = pos_data['v'][idx_v]
         pos_h = pos_data['h'][idx_h]
-        
         return f"{pos_v} {pos_h}"
 
     def __repr__(self) -> str:
         return f"{self.class_name} ({self.confidence:.1f}%)"
 
 class ObjectDetector:
+    """Wraps the DNN and Picamera2 camera for frame capture + detection."""
     def __init__(self, language: str):
         self.net = None
         self.language = language
-        self.classes = CLASSES[language]
+        self.classes = CLASSES.get(language)
 
         try:
             print("Initializing camera...")
@@ -79,8 +81,9 @@ class ObjectDetector:
             self.camera.start()
             print("Camera started")
         except Exception as e:
+            # Camera may not be present in some environments; keep object usable
             print(f"Failed to start camera: {e}", flush=True)
-            return
+            self.camera = None
 
     def initialize(self) -> None:
         """Initialize the detection model and camera"""
@@ -88,33 +91,33 @@ class ObjectDetector:
         print("Loading DNN model...")
         try:
             self.net = cv2.dnn.readNetFromTensorflow(MODEL_WEIGHTS, MODEL_CONFIG)
-            print("Net loaded, setting backend...")
             self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
             self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
             print("Model loaded")
         except Exception as e:
             print("Error loading model:", e)
+            self.net = None
 
     
-    def capture_and_detect(self):
-        """ Capture a frame and perform object detection """
+    def capture_and_detect(self) -> Tuple[List[DetectedObject], np.ndarray]:
+        """Capture one frame and run DNN detection.
 
-        # Capture frame
+        Returns a tuple `(detected_objects, drawn_frame_bytes)` where
+        `detected_objects` is a list of DetectedObject instances and
+        `drawn_frame` is a CV image (BGR).
+        """
+
+        # Capture and convert to OpenCV BGR
         frame = self.camera.capture_array()
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR) # OpenCV usa BGR
-        
-        # Detection logic
-        blob = cv2.dnn.blobFromImage(frame, 1.0/127.5, BLOB_SIZE, (127.5, 127.5, 127.5), True, False)
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+
+        # Prepare blob and run forward pass
+        blob = cv2.dnn.blobFromImage(frame, 1.0 / 127.5, BLOB_SIZE, (127.5, 127.5, 127.5), True, False)
         self.net.setInput(blob)
         detections = self.net.forward()
 
-        # RUN DETECTION
-        # SSD output shape: (1, 1, N, 7)
-        # N = number of detected objects
-        # Each detection:
-        #       [0] batch_id, [1] class_id, [2] confidence,
-        #       [3] x_min, [4] y_min, [5] x_max, [6] y_max (normalized)
-        detected_objects = []
+        # SSD output: (1, 1, N, 7) -> [batch, class_id, confidence, x_min, y_min, x_max, y_max]
+        detected_objects: List[DetectedObject] = []
         height, width = frame.shape[:2]
 
         for i in range(detections.shape[2]):
@@ -151,23 +154,29 @@ class ObjectDetector:
         return detected_objects, frame
     
     def cleanup(self) -> None:
-        if self.camera:
-            self.camera.stop()
+        """Stop camera if running and free resources."""
+        if getattr(self, 'camera', None):
+            try:
+                self.camera.stop()
+            except Exception:
+                pass
             print("Camera stopped")
 
 def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue, language: str) -> None:
-    """
-    Main loop object detection + Video Streaming
+    """Process entrypoint: capture frames, detect objects, and stream frames.
+
+    - `detection_queue` receives lists of DetectedObject
+    - `frame_queue` receives the latest JPEG bytes for streaming
+    This function writes runtime logs to `log_camera.txt` in the same folder.
     """
 
     detector = ObjectDetector(language)
     f = open('log_camera.txt', 'w')
     sys.stdout = f
-    
+
     try:
         detector.initialize()
 
-        # Log performance metrics
         frame_count = 0
         start_time = time.time()
         
@@ -201,13 +210,8 @@ def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue, l
             # Every 5 frames, print detailed detections
             if frame_count % 5 == 0:
                 for i, obj in enumerate(detections, start=1):
-                    print(
-                        f"  Object {i} | Class: {obj.class_name}, "
-                        f"Confidence: {obj.confidence:.2f}, "
-                        f"Bounding Box: {obj.box}",
-                        flush=True
-                    )
-    
+                    print(f"  Object {i} | Class: {obj.class_name}, Confidence: {obj.confidence:.2f}, Bounding Box: {obj.box}", flush=True)
+
     except Exception as e:
         print(f"Error camera process: {e}")
     finally:

@@ -65,13 +65,13 @@
         "history_label": "STORIA DELLA CONVERSAZIONE:",
         "objects_label": "IN QUESTO MOMENTO STAI VEDENDO QUESTI OGGETTI:",
         "user_message_label": "MESSAGGIO DELL'UTENTE:",
-        "instruction": "ISTRUZIONE: Fornisci una risposta breve. Se l'utente ti chiede cosa stai vedendo, fai riferimento agli oggetti che ti ho elencato. Usa la storia della conversazione solo se espressamente richiesto.",
+        "instruction": "Devi conversare con l'utente e stai vedendo degli oggetti. Segui rigorosamente le regole seguenti:\n1. Fornisci sempre risposte brevi e dirette.\n2. Rispondi alle domande generali o conoscenza comune utilizzando esclusivamente la tua conoscenza generale, senza fare riferimento agli oggetti visibili o al contesto visivo. \n3. Se l'utente ti chiede: Cosa stai vedendo? Quali oggetti sono presenti davati a te, Quale oggetti si ttrova ...? fai riferimento agli oggetti che ti ho elencato sopra nella lista degli OGGETTI CHE STAI VEDENDO. \n4. Non menzionare mai gli oggetti visibili se la domanda non li riguarda direttamente\n",
         "no_objects": "Nessun oggetto rilevato.\n",
         "position_label": "Posizione:"
       },
       "messages": {
-        "notification": "Notifica: {class_name} rilevato (confidenza {conf:.0f}%) in posizione {pos}.",
-        "alert_response": "Ti avviserò quando vedrò: {objects}.",
+        "notification": "Notifica: l'oggetto {class_name} rilevato (confidenza {conf:.0f}%) in posizione {pos}.",
+        "alert_response": "Ti avviserò quando vedrò l'oggetto: {objects}.",
         "alert_no_objects": "Ho capito che vuoi un avviso, ma non riconosco l'oggetto."
       }
     }

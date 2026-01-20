@@ -1,7 +1,5 @@
 import time
 import multiprocessing as mp
-import threading
-import psutil
 import json
 from flask import Flask, render_template, Response, jsonify
 
@@ -57,10 +55,7 @@ def listen():
         return jsonify({"error": "Assistant not initialized"}), 500
     
     def generate():
-        """
-        Generator that yields JSON updates as newline-delimited JSON.
-        Each update is a complete JSON object on its own line.
-        """
+        """Yield newline-delimited JSON updates from assistant."""
         try:
             for update in assistant.process_single_interaction_streaming():
                 # Send each update as a separate JSON line
@@ -85,11 +80,17 @@ def notifications():
             try:
                 # Get notification from queue (blocking with timeout)
                 notification = ui_notification_queue.get(timeout=1.0)
-                # Send as Server-Sent Event
-                yield f"data: {json.dumps(notification)}\n\n"
+
+                msg = str(notification.get("notification", ""))
+                msg = msg.replace("\n", " ").strip()
+
+                payload = json.dumps({"notification": msg}, ensure_ascii=False)
+
+                yield f"data: {payload}\n\n"
+
             except:
                 # Send heartbeat to keep connection alive
-                yield f": Notification Error\n\n"
+                yield ": keep-alive\n\n"
     return Response(generate(), mimetype='text/event-stream')
 
 

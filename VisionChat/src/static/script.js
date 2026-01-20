@@ -6,11 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('msg', sender);
         
-        if(sender === 'ai') {
-             messageDiv.innerHTML = text; 
-        } else {
-             messageDiv.textContent = text;
-        }
+        messageDiv.textContent = text;
+
         chatLog.appendChild(messageDiv);
         chatLog.scrollTop = chatLog.scrollHeight;
         return messageDiv;
@@ -53,10 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         const data = JSON.parse(line);
 
                         if (data.user) {
-                            // stop listening animation as soon as we get recognized user text
-                            btn.classList.remove('listening');
-                            btn.innerHTML = "🎤";
-                            
                             addMessage(data.user, 'user');
                         }
 
@@ -104,6 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupNotifications() {
         const eventSource = new EventSource('/notifications');
         eventSource.onmessage = (event) => {
+
+            if (!event.data || event.data.trim() === '') return;
+
             try {
                 const data = JSON.parse(event.data);
                 if (data.notification) {

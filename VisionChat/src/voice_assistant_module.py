@@ -5,13 +5,10 @@ import time
 import queue
 import multiprocessing as mp
 import pyaudio
-import requests
-import sys
 import os
-from typing import List
 from vosk import Model, KaldiRecognizer
 
-from detected_object_module import DetectedObject, CLASSES
+from detected_object_module import CLASSES
 from chatLLM import LLMClient
 
 # Audio Configuration
@@ -26,7 +23,7 @@ VOSK_MODEL_PATH = {
 
 # Load messages from JSON file
 def load_messages():
-    """Load language-specific messages from JSON file"""
+    """Load language-specific messages from `text.json`."""
     prompts_path = os.path.join(os.path.dirname(__file__), 'text.json')
     with open(prompts_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
@@ -37,7 +34,6 @@ MESSAGES = load_messages()
 def configure_microphone_gain() -> None:
     """
     Try to set microphone gain using `amixer`. Fail silently if not available.
-    This is best-effort and non-blocking (does not raise on failure).
     """
     try:
         subprocess.run(["amixer", "-c", MIC_CARD, "set", MIC_CONTROL_NAME, "85%"], check=False)
@@ -105,7 +101,7 @@ class VoiceAssistant:
 
         for i in range(self.audio.get_device_count()):
             device_info = self.audio.get_device_info_by_index(i)
-            if "USB" in device_info["name"]:
+            if "USB" in device_info.get("name", ""):
                 print(f"Found microphone: {device_info['name']}")
                 return i
 
@@ -116,8 +112,8 @@ class VoiceAssistant:
         Callback function for audio stream
         Queues audio data only when listening is active
         """
-        
-        if self.listening:  
+        # Only queue audio when actively listening
+        if self.listening:
             self.audio_queue.put(in_data)
         return (in_data, pyaudio.paContinue)
     
@@ -149,6 +145,7 @@ class VoiceAssistant:
                     recognized_text = result.get("text", "")
 
                     if recognized_text:
+                        print("\n")
                         break
 
                 else:
@@ -245,11 +242,11 @@ class VoiceAssistant:
         print("Voice Assistant active!")
 
     def handle_alert_request(self, recognized_text: str) -> str:
-        """
-        Check whether the recognized text is an alert command and handle it.
-        """
+        """Check whether the recognized text is an alert command and handle it."""
+        # Ask the LLM whether the user requested alerts and which objects
+
         alert_info = self.llm.detect_alert_request(recognized_text)
-        
+
         if isinstance(alert_info, dict) and alert_info.get("is_alert_request"):
             valid_objects = [obj for obj in alert_info.get("target_objects", []) if obj in CLASSES[self.language]]
             
@@ -287,7 +284,7 @@ class VoiceAssistant:
         # Send user text to UI immediately after recognition
         yield {"user": user_text}
 
-        # 2. Check for alert requests
+        # 2. Check for alert requests (enable/disable notifications)
         alert_resp = self.handle_alert_request(user_text)
         if alert_resp:
             # Send assistant response for alert
@@ -297,13 +294,13 @@ class VoiceAssistant:
             self.speak_response(alert_resp)
             return
 
-        # 3. Get latest detected objects
+        # 3. Get latest detected objects snapshot
         with self.last_detections_lock:
             detected_objects = list(self.last_detections)        
         
         full_response_text = ''
 
-        # Send assistant response to UI
+        # 4. Stream tokens from LLM to UI
         for token in self.llm.generate_response(detected_objects, user_text):
             full_response_text += token
             yield {"token": token}
@@ -317,4 +314,12 @@ class VoiceAssistant:
         if self.stream:
             self.stream.stop_stream()
             self.stream.close()
+
+        # Shutdown of alert thread
+        if self.alert_thread and self.alert_thread.is_alive():
+            try:
+                self.alert_thread.join(timeout=0.5)
+            except Exception:
+                pass
+
         self.audio.terminate()

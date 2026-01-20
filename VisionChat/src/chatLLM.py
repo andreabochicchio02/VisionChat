@@ -1,6 +1,5 @@
-import requests
 import json
-import sys
+import requests
 import os
 from typing import List, Tuple
 
@@ -13,8 +12,9 @@ def load_prompts():
     """Load language-specific prompts from JSON file"""
     prompts_path = os.path.join(os.path.dirname(__file__), 'text.json')
     with open(prompts_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-    return {lang: data['text'][lang] for lang in data['text']}
+        data = json.load(f)
+    return {lang: data["text"][lang] for lang in data.get("text")}
+
 
 PROMPTS = load_prompts()
 
@@ -38,14 +38,10 @@ class LLMClient:
 
         # Keep only last N interactions
         if len(self.history) > self.max_history:
-            self.history = self.history[-self.max_history:]
+            self.history = self.history[-self.max_history :]
 
     def get_formatted_history(self) -> str:
-        """
-        Return conversation history formatted as:
-        User Question: ...
-        LLM Answer: ...
-        """
+        """Return formatted conversation history or 'no_history' when empty."""
         if not self.history:
             return "no_history"
 
@@ -59,18 +55,15 @@ class LLMClient:
         return formatted.strip()
 
     def add_alert_object(self, class_name: str) -> None:
-        """Add an object class to the alert list"""
+        """Add an object class name to the alert list."""
         self.alert_object_list.add(class_name)
 
-    def get_alert_objects(self) -> list:
-        """Return current alert object classes as a list"""
+    def get_alert_objects(self) -> List[str]:
+        """Return alert object class names as a list."""
         return list(self.alert_object_list)
 
     def detect_alert_request(self, user_text: str) -> dict:
-        """
-        Detect if user is requesting an alert and extract target objects.
-        Returns: dict with 'is_alert_request', 'response', and 'target_objects'
-        """
+        """Detect whether the user requests an alert and extract targets."""
 
         p = PROMPTS[self.language]['alert_detection']
         
@@ -80,12 +73,7 @@ class LLMClient:
             f"{p['user_message']} \"{user_text}\"\n"
         )
 
-        payload = {
-            "model": MODEL,
-            "prompt": prompt,
-            "stream": False,
-            "format": "json"
-        }
+        payload = {"model": MODEL, "prompt": prompt, "stream": False, "format": "json"}
 
         try:
             response = requests.post(URL, json=payload, timeout=10)
@@ -113,9 +101,7 @@ class LLMClient:
 
 
     def generate_response(self, objects: List, user_text: str) -> str:
-        """
-        Generate a response based on detected objects and conversation history
-        """
+        """Generate a response based on detected objects and conversation history"""
         p = PROMPTS[self.language]['response_generation']
 
         # Build scene description
@@ -135,18 +121,15 @@ class LLMClient:
             f"{p['history_label']}\n"
             f"{conversation_history}\n\n"
             f"{p['objects_label']}\n"
-            f"{scene_description}\n\n"
+            f"{scene_description}\n"
+            f"{p['user_message_label']} {user_text}\n\n"
+            f"{p['instruction']}\n"
             f"{p['user_message_label']} {user_text}\n"
-            f"{p['instruction']}"
         )
 
-        payload = {
-            "model": MODEL,
-            "prompt": prompt,
-            "stream": True
-        }
+        payload = {"model": MODEL, "prompt": prompt, "stream": True}
 
-        print("Prompt", "=" * 25)
+        print("\n\nPrompt", "=" * 25)
         print(prompt)
         print("=" * 25)
 
