@@ -94,8 +94,19 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', handleListenClick);
 
     // Notifications
+    let eventSource = null;
+
     function setupNotifications() {
-        const eventSource = new EventSource('/notifications');
+        if (eventSource) {
+            eventSource.close();
+        }
+
+        eventSource = new EventSource('/notifications');
+
+        eventSource.onopen = () => {
+            console.log('SSE connected');
+        };
+
         eventSource.onmessage = (event) => {
 
             if (!event.data || event.data.trim() === '') return;
@@ -109,8 +120,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error parsing notification:', e);
             }
         };
-        eventSource.onerror = (error) => console.error('EventSource error:', error);
+
+        eventSource.onerror = (error) => {
+            console.error('EventSource error:', error);
+        };
+
         console.log('Notification listener started');
     }
+
     setupNotifications();
+
+    window.addEventListener('beforeunload', () => {
+        if (eventSource) {
+            eventSource.close();
+        }
+    });
+
 });

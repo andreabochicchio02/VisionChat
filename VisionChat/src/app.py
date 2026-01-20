@@ -91,7 +91,7 @@ def notifications():
             except:
                 # Send heartbeat to keep connection alive
                 yield ": keep-alive\n\n"
-    return Response(generate(), mimetype='text/event-stream')
+    return Response(generate(), mimetype='text/event-stream', headers={"Cache-Control": "no-cache","X-Accel-Buffering": "no"})
 
 
 def init_system():
