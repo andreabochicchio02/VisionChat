@@ -1,530 +1,282 @@
 Loading DNN model...
 Model loaded
-Frame 1, FPS: 1.4, Objects: 1
-Frame 2, FPS: 1.6, Objects: 1
-Frame 3, FPS: 1.8, Objects: 1
-Frame 4, FPS: 1.8, Objects: 1
-Frame 5, FPS: 1.8, Objects: 1
-  Object 1 | Class: sedia, Confidence: 78.81, Bounding Box: (0.015428245, 0.061876982, 0.7028809, 0.9845935)
-Frame 6, FPS: 1.8, Objects: 1
-Frame 7, FPS: 1.8, Objects: 1
-Frame 8, FPS: 1.8, Objects: 1
-Frame 9, FPS: 1.8, Objects: 1
-Frame 10, FPS: 1.6, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.91, Bounding Box: (0.014923334, 0.0640938, 0.7022135, 0.9835267)
-Frame 11, FPS: 1.6, Objects: 1
-Frame 12, FPS: 1.6, Objects: 1
-Frame 13, FPS: 1.6, Objects: 1
-Frame 14, FPS: 1.6, Objects: 1
-Frame 15, FPS: 1.6, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.93, Bounding Box: (0.016146094, 0.061196625, 0.7058368, 0.98542005)
-Frame 16, FPS: 1.6, Objects: 1
-Frame 17, FPS: 1.6, Objects: 1
-Frame 18, FPS: 1.6, Objects: 1
-Frame 19, FPS: 1.6, Objects: 1
-Frame 20, FPS: 1.6, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.86, Bounding Box: (0.015772551, 0.06366715, 0.70491683, 0.98262906)
-Frame 21, FPS: 1.6, Objects: 1
-Frame 22, FPS: 1.7, Objects: 1
-Frame 23, FPS: 1.7, Objects: 1
-Frame 24, FPS: 1.7, Objects: 1
-Frame 25, FPS: 1.7, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.70, Bounding Box: (0.015212834, 0.06394228, 0.7054974, 0.98421586)
-Frame 26, FPS: 1.7, Objects: 1
-Frame 27, FPS: 1.7, Objects: 1
-Frame 28, FPS: 1.7, Objects: 1
-Frame 29, FPS: 1.7, Objects: 1
-Frame 30, FPS: 1.8, Objects: 1
-  Object 1 | Class: sedia, Confidence: 76.69, Bounding Box: (0.019361436, 0.063301444, 0.70435846, 0.98423576)
-Frame 31, FPS: 1.8, Objects: 1
-Frame 32, FPS: 1.8, Objects: 1
-Frame 33, FPS: 1.8, Objects: 1
-Frame 34, FPS: 1.8, Objects: 1
-Frame 35, FPS: 1.8, Objects: 1
-  Object 1 | Class: sedia, Confidence: 76.61, Bounding Box: (0.015369087, 0.06825295, 0.7083472, 0.9857081)
-Frame 36, FPS: 1.8, Objects: 1
-Frame 37, FPS: 1.8, Objects: 1
-Frame 38, FPS: 1.8, Objects: 1
-Frame 39, FPS: 1.9, Objects: 1
-Frame 40, FPS: 1.9, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.62, Bounding Box: (0.01597923, 0.06419593, 0.7124482, 0.9862432)
-Frame 41, FPS: 1.9, Objects: 1
-Frame 42, FPS: 1.9, Objects: 1
-Frame 43, FPS: 1.9, Objects: 1
-Frame 44, FPS: 1.9, Objects: 1
-Frame 45, FPS: 1.9, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.69, Bounding Box: (0.015269101, 0.06003487, 0.70376533, 0.9834509)
-Frame 46, FPS: 1.9, Objects: 1
-Frame 47, FPS: 1.9, Objects: 1
-Frame 48, FPS: 1.9, Objects: 1
-Frame 49, FPS: 1.9, Objects: 1
-Frame 50, FPS: 1.9, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.47, Bounding Box: (0.016067386, 0.064896345, 0.7059523, 0.984913)
-Frame 51, FPS: 1.9, Objects: 1
-Frame 52, FPS: 1.9, Objects: 1
-Frame 53, FPS: 1.9, Objects: 1
-Frame 54, FPS: 1.9, Objects: 1
-Frame 55, FPS: 1.9, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.36, Bounding Box: (0.015610218, 0.06415978, 0.7031633, 0.97516394)
-Frame 56, FPS: 1.9, Objects: 1
-Frame 57, FPS: 1.9, Objects: 1
-Frame 58, FPS: 1.9, Objects: 1
-Frame 59, FPS: 1.9, Objects: 1
-Frame 60, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.63, Bounding Box: (0.016260028, 0.059001595, 0.7016369, 0.9840685)
-Frame 61, FPS: 2.0, Objects: 1
-Frame 62, FPS: 2.0, Objects: 1
-Frame 63, FPS: 2.0, Objects: 1
-Frame 64, FPS: 2.0, Objects: 1
-Frame 65, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.52, Bounding Box: (0.015090108, 0.061103106, 0.7040554, 0.98339736)
-Frame 66, FPS: 2.0, Objects: 1
-Frame 67, FPS: 2.0, Objects: 1
-Frame 68, FPS: 2.0, Objects: 1
-Frame 69, FPS: 2.0, Objects: 1
-Frame 70, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.16, Bounding Box: (0.018183291, 0.056981325, 0.6998684, 0.9839057)
-Frame 71, FPS: 2.0, Objects: 1
-Frame 72, FPS: 2.0, Objects: 1
-Frame 73, FPS: 2.0, Objects: 1
-Frame 74, FPS: 2.0, Objects: 1
-Frame 75, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 75.17, Bounding Box: (0.018071502, 0.06858018, 0.7209139, 0.98916924)
-Frame 76, FPS: 2.0, Objects: 1
-Frame 77, FPS: 2.0, Objects: 1
-Frame 78, FPS: 2.0, Objects: 1
-Frame 79, FPS: 2.0, Objects: 1
-Frame 80, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.49, Bounding Box: (0.014936149, 0.066762894, 0.7074242, 0.98210526)
-Frame 81, FPS: 2.0, Objects: 1
-Frame 82, FPS: 2.0, Objects: 1
-Frame 83, FPS: 2.0, Objects: 1
-Frame 84, FPS: 2.0, Objects: 1
-Frame 85, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.08, Bounding Box: (0.016232342, 0.06532231, 0.7018244, 0.9846202)
-Frame 86, FPS: 2.0, Objects: 1
-Frame 87, FPS: 2.0, Objects: 1
-Frame 88, FPS: 2.0, Objects: 1
-Frame 89, FPS: 2.0, Objects: 1
-Frame 90, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 76.85, Bounding Box: (0.017325759, 0.06446099, 0.7111023, 0.98467076)
-Frame 91, FPS: 2.0, Objects: 1
-Frame 92, FPS: 2.0, Objects: 1
-Frame 93, FPS: 2.0, Objects: 1
-Frame 94, FPS: 2.0, Objects: 1
-Frame 95, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.46, Bounding Box: (0.015066087, 0.06416124, 0.7091846, 0.9839452)
-Frame 96, FPS: 2.0, Objects: 1
-Frame 97, FPS: 2.0, Objects: 1
-Frame 98, FPS: 2.0, Objects: 1
-Frame 99, FPS: 2.0, Objects: 1
-Frame 100, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 76.08, Bounding Box: (0.019921571, 0.06425804, 0.7147546, 0.9859869)
-Frame 101, FPS: 2.0, Objects: 1
-Frame 102, FPS: 2.0, Objects: 1
-Frame 103, FPS: 2.0, Objects: 1
-Frame 104, FPS: 2.0, Objects: 1
-Frame 105, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 71.42, Bounding Box: (0.014661968, 0.022629172, 0.7192528, 0.98958826)
-Frame 106, FPS: 2.0, Objects: 1
-Frame 107, FPS: 2.0, Objects: 1
-Frame 108, FPS: 2.0, Objects: 1
-Frame 109, FPS: 2.0, Objects: 1
-Frame 110, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.20, Bounding Box: (0.014463872, 0.06481776, 0.70607054, 0.98314273)
-Frame 111, FPS: 2.0, Objects: 1
-Frame 112, FPS: 2.0, Objects: 1
-Frame 113, FPS: 2.0, Objects: 1
-Frame 114, FPS: 2.0, Objects: 1
-Frame 115, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 76.98, Bounding Box: (0.01669234, 0.06464237, 0.7071386, 0.9832192)
-Frame 116, FPS: 2.0, Objects: 1
-Frame 117, FPS: 2.0, Objects: 1
-Frame 118, FPS: 2.0, Objects: 1
-Frame 119, FPS: 2.0, Objects: 1
-Frame 120, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.00, Bounding Box: (0.014354646, 0.06492567, 0.69930804, 0.97784674)
-Frame 121, FPS: 2.0, Objects: 1
-Frame 122, FPS: 2.0, Objects: 1
-Frame 123, FPS: 2.0, Objects: 1
-Frame 124, FPS: 2.0, Objects: 1
-Frame 125, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.56, Bounding Box: (0.015250176, 0.065956116, 0.6993152, 0.98181415)
-Frame 126, FPS: 2.0, Objects: 1
-Frame 127, FPS: 2.0, Objects: 1
-Frame 128, FPS: 2.0, Objects: 1
-Frame 129, FPS: 2.0, Objects: 1
-Frame 130, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 76.87, Bounding Box: (0.018060625, 0.06088233, 0.7086949, 0.9846581)
-Frame 131, FPS: 2.0, Objects: 1
-Frame 132, FPS: 2.0, Objects: 1
-Frame 133, FPS: 2.0, Objects: 1
-Frame 134, FPS: 2.0, Objects: 1
-Frame 135, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 76.66, Bounding Box: (0.01586181, 0.062879354, 0.71362233, 0.98509014)
-Frame 136, FPS: 2.0, Objects: 1
-Frame 137, FPS: 2.0, Objects: 1
-Frame 138, FPS: 2.0, Objects: 1
-Frame 139, FPS: 2.0, Objects: 1
-Frame 140, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.24, Bounding Box: (0.016008824, 0.06594303, 0.70594263, 0.9790001)
-Frame 141, FPS: 2.0, Objects: 1
-Frame 142, FPS: 2.0, Objects: 1
-Frame 143, FPS: 2.0, Objects: 1
-Frame 144, FPS: 2.0, Objects: 1
-Frame 145, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 76.83, Bounding Box: (0.015400797, 0.06322935, 0.7076856, 0.9838569)
-Frame 146, FPS: 2.0, Objects: 1
-Frame 147, FPS: 2.0, Objects: 1
-Frame 148, FPS: 2.0, Objects: 1
-Frame 149, FPS: 2.0, Objects: 1
-Frame 150, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.08, Bounding Box: (0.015644014, 0.064501345, 0.7058141, 0.98404187)
-Frame 151, FPS: 2.0, Objects: 1
-Frame 152, FPS: 2.0, Objects: 1
-Frame 153, FPS: 2.0, Objects: 1
-Frame 154, FPS: 2.0, Objects: 1
-Frame 155, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.19, Bounding Box: (0.015335858, 0.06535858, 0.70185864, 0.9828915)
-Frame 156, FPS: 2.0, Objects: 1
-Frame 157, FPS: 2.0, Objects: 1
-Frame 158, FPS: 2.0, Objects: 1
-Frame 159, FPS: 2.0, Objects: 1
-Frame 160, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.49, Bounding Box: (0.015333444, 0.06681013, 0.7122054, 0.9782585)
-Frame 161, FPS: 2.0, Objects: 1
-Frame 162, FPS: 2.0, Objects: 1
-Frame 163, FPS: 2.0, Objects: 1
-Frame 164, FPS: 2.0, Objects: 1
-Frame 165, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.43, Bounding Box: (0.017192721, 0.06319544, 0.7084087, 0.98511565)
-Frame 166, FPS: 2.0, Objects: 1
-Frame 167, FPS: 2.0, Objects: 1
-Frame 168, FPS: 2.0, Objects: 1
-Frame 169, FPS: 2.0, Objects: 1
-Frame 170, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.44, Bounding Box: (0.01832828, 0.062274635, 0.70154727, 0.983355)
-Frame 171, FPS: 2.0, Objects: 1
-Frame 172, FPS: 2.0, Objects: 1
-Frame 173, FPS: 2.0, Objects: 1
-Frame 174, FPS: 2.0, Objects: 1
-Frame 175, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.40, Bounding Box: (0.014952511, 0.06418663, 0.71043754, 0.9851752)
-Frame 176, FPS: 2.0, Objects: 1
-Frame 177, FPS: 2.0, Objects: 1
-Frame 178, FPS: 2.0, Objects: 1
-Frame 179, FPS: 2.0, Objects: 1
-Frame 180, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.44, Bounding Box: (0.015413046, 0.06349069, 0.7024679, 0.98201936)
-Frame 181, FPS: 2.0, Objects: 1
-Frame 182, FPS: 2.0, Objects: 1
-Frame 183, FPS: 2.0, Objects: 1
-Frame 184, FPS: 2.0, Objects: 1
-Frame 185, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.97, Bounding Box: (0.016949832, 0.064411074, 0.7091316, 0.9850892)
-Frame 186, FPS: 2.0, Objects: 1
-Frame 187, FPS: 2.0, Objects: 1
-Frame 188, FPS: 2.0, Objects: 1
-Frame 189, FPS: 2.0, Objects: 1
-Frame 190, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 76.66, Bounding Box: (0.017574579, 0.066120386, 0.70602345, 0.9835988)
-Frame 191, FPS: 2.0, Objects: 1
-Frame 192, FPS: 2.0, Objects: 1
-Frame 193, FPS: 2.0, Objects: 1
-Frame 194, FPS: 2.0, Objects: 1
-Frame 195, FPS: 2.0, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.41, Bounding Box: (0.014524758, 0.06404737, 0.70466805, 0.98331666)
-Frame 196, FPS: 1.9, Objects: 1
-Frame 197, FPS: 1.9, Objects: 1
-Frame 198, FPS: 1.9, Objects: 1
-Frame 199, FPS: 1.9, Objects: 1
-Frame 200, FPS: 1.9, Objects: 1
-  Object 1 | Class: sedia, Confidence: 76.49, Bounding Box: (0.017338306, 0.06289303, 0.7059313, 0.9808674)
-Frame 201, FPS: 1.9, Objects: 1
-Frame 202, FPS: 1.9, Objects: 1
-Frame 203, FPS: 1.9, Objects: 1
-Frame 204, FPS: 1.9, Objects: 1
-Frame 205, FPS: 1.9, Objects: 1
-  Object 1 | Class: sedia, Confidence: 78.47, Bounding Box: (0.015573502, 0.06471339, 0.70860213, 0.98456156)
-Frame 206, FPS: 1.9, Objects: 1
-Frame 207, FPS: 1.9, Objects: 1
-Frame 208, FPS: 1.9, Objects: 1
-Frame 209, FPS: 1.9, Objects: 1
-Frame 210, FPS: 1.9, Objects: 1
-  Object 1 | Class: sedia, Confidence: 77.84, Bounding Box: (0.01717195, 0.06251797, 0.70563054, 0.9842416)
-Frame 211, FPS: 1.9, Objects: 1
-Frame 212, FPS: 1.9, Objects: 1
-Frame 213, FPS: 1.9, Objects: 1
-Frame 214, FPS: 1.9, Objects: 1
-Frame 215, FPS: 1.9, Objects: 1
-  Object 1 | Class: sedia, Confidence: 78.67, Bounding Box: (0.016165823, 0.065549314, 0.70504856, 0.9832335)
-Frame 216, FPS: 1.9, Objects: 1
-Frame 217, FPS: 1.9, Objects: 1
-Frame 218, FPS: 1.9, Objects: 2
-Frame 219, FPS: 1.9, Objects: 4
-Frame 220, FPS: 1.9, Objects: 4
-  Object 1 | Class: bottiglia, Confidence: 80.84, Bounding Box: (0.13490322, 0.20917752, 0.31823844, 0.84135234)
-  Object 2 | Class: sedia, Confidence: 52.67, Bounding Box: (0.0076124966, 0.061164916, 0.6655344, 0.9557063)
-  Object 3 | Class: divano, Confidence: 52.18, Bounding Box: (-0.051292807, 0.060042173, 0.6778796, 0.8755417)
-  Object 4 | Class: persona, Confidence: 52.17, Bounding Box: (0.0013365746, 0.0015500188, 0.29795295, 0.6739954)
-Frame 221, FPS: 1.9, Objects: 4
-Frame 222, FPS: 1.9, Objects: 2
-Frame 223, FPS: 1.9, Objects: 2
-Frame 224, FPS: 1.9, Objects: 2
-Frame 225, FPS: 1.9, Objects: 3
-  Object 1 | Class: bottiglia, Confidence: 79.28, Bounding Box: (0.13365275, 0.162626, 0.31320325, 0.8461766)
-  Object 2 | Class: sedia, Confidence: 67.12, Bounding Box: (0.012971103, 0.07307774, 0.6825738, 0.96166784)
-  Object 3 | Class: bottiglia, Confidence: 51.35, Bounding Box: (0.13801664, 0.46239135, 0.30461854, 0.8317009)
-Frame 226, FPS: 1.9, Objects: 2
-Frame 227, FPS: 1.9, Objects: 2
-Frame 228, FPS: 1.9, Objects: 2
-Frame 229, FPS: 1.9, Objects: 2
-Frame 230, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 77.62, Bounding Box: (0.1326941, 0.16389659, 0.31649372, 0.8460797)
-  Object 2 | Class: sedia, Confidence: 67.30, Bounding Box: (0.011814207, 0.07061568, 0.677238, 0.9660523)
-Frame 231, FPS: 1.9, Objects: 2
-Frame 232, FPS: 1.9, Objects: 2
-Frame 233, FPS: 1.9, Objects: 2
-Frame 234, FPS: 1.9, Objects: 3
-Frame 235, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 78.30, Bounding Box: (0.13258508, 0.16194361, 0.3179461, 0.84723204)
-  Object 2 | Class: sedia, Confidence: 67.86, Bounding Box: (0.011372447, 0.067802906, 0.6768476, 0.9668968)
-Frame 236, FPS: 1.9, Objects: 2
-Frame 237, FPS: 1.9, Objects: 2
-Frame 238, FPS: 1.9, Objects: 2
-Frame 239, FPS: 1.9, Objects: 2
-Frame 240, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 77.58, Bounding Box: (0.1314554, 0.16059321, 0.31883782, 0.8511489)
-  Object 2 | Class: sedia, Confidence: 64.29, Bounding Box: (0.012282729, 0.06562498, 0.6803255, 0.9663199)
-Frame 241, FPS: 1.9, Objects: 2
-Frame 242, FPS: 1.9, Objects: 2
-Frame 243, FPS: 1.9, Objects: 2
-Frame 244, FPS: 1.9, Objects: 2
-Frame 245, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 76.98, Bounding Box: (0.13291028, 0.16167149, 0.31556985, 0.8497915)
-  Object 2 | Class: sedia, Confidence: 66.36, Bounding Box: (0.013956666, 0.07298079, 0.6866035, 0.966998)
-Frame 246, FPS: 1.9, Objects: 2
-Frame 247, FPS: 1.9, Objects: 2
-Frame 248, FPS: 1.9, Objects: 2
-Frame 249, FPS: 1.9, Objects: 2
-Frame 250, FPS: 1.9, Objects: 3
-  Object 1 | Class: bottiglia, Confidence: 78.45, Bounding Box: (0.13266982, 0.15825227, 0.3180644, 0.84519064)
-  Object 2 | Class: sedia, Confidence: 65.68, Bounding Box: (0.013544291, 0.06568688, 0.6778617, 0.96067244)
-  Object 3 | Class: bottiglia, Confidence: 51.93, Bounding Box: (0.13766146, 0.44954884, 0.30369613, 0.8344574)
-Frame 251, FPS: 1.9, Objects: 3
-Frame 252, FPS: 1.9, Objects: 2
-Frame 253, FPS: 1.9, Objects: 2
-Frame 254, FPS: 1.9, Objects: 2
-Frame 255, FPS: 1.9, Objects: 1
-  Object 1 | Class: bottiglia, Confidence: 77.12, Bounding Box: (0.13787316, 0.13886958, 0.32098603, 0.8085642)
-Frame 256, FPS: 1.9, Objects: 2
-Frame 257, FPS: 1.9, Objects: 2
-Frame 258, FPS: 1.9, Objects: 3
-Frame 259, FPS: 2.0, Objects: 2
-Frame 260, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 82.46, Bounding Box: (0.15257132, 0.14084834, 0.3313807, 0.8548436)
-  Object 2 | Class: sedia, Confidence: 61.53, Bounding Box: (0.013823479, 0.06501272, 0.70229495, 0.9543098)
-Frame 261, FPS: 2.0, Objects: 2
-Frame 262, FPS: 2.0, Objects: 2
-Frame 263, FPS: 2.0, Objects: 2
-Frame 264, FPS: 2.0, Objects: 2
-Frame 265, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 81.49, Bounding Box: (0.15441352, 0.13577837, 0.33179936, 0.84522253)
-  Object 2 | Class: sedia, Confidence: 67.09, Bounding Box: (0.01095587, 0.057810068, 0.69585466, 0.95922816)
-Frame 266, FPS: 2.0, Objects: 2
-Frame 267, FPS: 2.0, Objects: 2
-Frame 268, FPS: 2.0, Objects: 2
-Frame 269, FPS: 2.0, Objects: 2
-Frame 270, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 81.68, Bounding Box: (0.15476501, 0.14277631, 0.33012637, 0.84661376)
-  Object 2 | Class: sedia, Confidence: 68.31, Bounding Box: (0.0113174915, 0.056729376, 0.69723326, 0.9641977)
-Frame 271, FPS: 2.0, Objects: 3
-Frame 272, FPS: 2.0, Objects: 2
-Frame 273, FPS: 2.0, Objects: 2
-Frame 274, FPS: 2.0, Objects: 2
-Frame 275, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 82.18, Bounding Box: (0.15296122, 0.13038051, 0.33243328, 0.8469403)
-  Object 2 | Class: sedia, Confidence: 64.60, Bounding Box: (0.010999888, 0.057334214, 0.69575226, 0.9487641)
-Frame 276, FPS: 2.0, Objects: 2
-Frame 277, FPS: 2.0, Objects: 2
-Frame 278, FPS: 2.0, Objects: 2
-Frame 279, FPS: 2.0, Objects: 2
-Frame 280, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 81.83, Bounding Box: (0.15311053, 0.1410558, 0.3318517, 0.8502977)
-  Object 2 | Class: sedia, Confidence: 65.39, Bounding Box: (0.0108216405, 0.058110327, 0.6970881, 0.9580306)
-Frame 281, FPS: 2.0, Objects: 2
-Frame 282, FPS: 2.0, Objects: 2
-Frame 283, FPS: 2.0, Objects: 2
-Frame 284, FPS: 2.0, Objects: 2
-Frame 285, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 82.26, Bounding Box: (0.15904117, 0.14103541, 0.33017126, 0.84846973)
-  Object 2 | Class: sedia, Confidence: 67.20, Bounding Box: (0.010306567, 0.06246373, 0.69886005, 0.9603547)
-Frame 286, FPS: 2.0, Objects: 2
-Frame 287, FPS: 2.0, Objects: 2
-Frame 288, FPS: 2.0, Objects: 2
-Frame 289, FPS: 2.0, Objects: 2
-Frame 290, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 82.13, Bounding Box: (0.1565564, 0.14133766, 0.33090937, 0.8425772)
-  Object 2 | Class: sedia, Confidence: 69.45, Bounding Box: (0.011295676, 0.057262868, 0.6926749, 0.95432484)
-Frame 291, FPS: 2.0, Objects: 2
-Frame 292, FPS: 2.0, Objects: 2
-Frame 293, FPS: 2.0, Objects: 2
-Frame 294, FPS: 2.0, Objects: 2
-Frame 295, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 80.31, Bounding Box: (0.15501806, 0.13894266, 0.33148038, 0.8470622)
-  Object 2 | Class: sedia, Confidence: 65.43, Bounding Box: (0.010813713, 0.057698846, 0.7019783, 0.9507755)
-Frame 296, FPS: 2.0, Objects: 2
-Frame 297, FPS: 2.0, Objects: 2
-Frame 298, FPS: 2.0, Objects: 2
-Frame 299, FPS: 2.0, Objects: 2
-Frame 300, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 81.34, Bounding Box: (0.15379903, 0.13887832, 0.33298773, 0.85113084)
-  Object 2 | Class: sedia, Confidence: 65.07, Bounding Box: (0.010479718, 0.058641493, 0.6928431, 0.9543404)
-Frame 301, FPS: 2.0, Objects: 3
-Frame 302, FPS: 2.0, Objects: 2
-Frame 303, FPS: 2.0, Objects: 2
-Frame 304, FPS: 2.0, Objects: 2
-Frame 305, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 80.77, Bounding Box: (0.15391558, 0.13732499, 0.3333633, 0.8487912)
-  Object 2 | Class: sedia, Confidence: 66.11, Bounding Box: (0.010977477, 0.06008166, 0.70314837, 0.95812756)
-Frame 306, FPS: 2.0, Objects: 2
-Frame 307, FPS: 2.0, Objects: 2
-Frame 308, FPS: 2.0, Objects: 2
-Frame 309, FPS: 2.0, Objects: 2
-Frame 310, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 81.30, Bounding Box: (0.15319803, 0.13428274, 0.33298874, 0.8528619)
-  Object 2 | Class: sedia, Confidence: 64.46, Bounding Box: (0.010358572, 0.06084189, 0.6961127, 0.95841515)
-Frame 311, FPS: 2.0, Objects: 2
-Frame 312, FPS: 2.0, Objects: 2
-Frame 313, FPS: 2.0, Objects: 2
-Frame 314, FPS: 2.0, Objects: 2
-Frame 315, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 81.52, Bounding Box: (0.15400925, 0.13681033, 0.33228567, 0.8477057)
-  Object 2 | Class: sedia, Confidence: 68.32, Bounding Box: (0.009913892, 0.06268588, 0.6955298, 0.9581151)
-Frame 316, FPS: 2.0, Objects: 2
-Frame 317, FPS: 2.0, Objects: 2
-Frame 318, FPS: 2.0, Objects: 2
-Frame 319, FPS: 2.0, Objects: 2
-Frame 320, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 80.35, Bounding Box: (0.15333906, 0.13779601, 0.33135644, 0.8416717)
-  Object 2 | Class: sedia, Confidence: 67.72, Bounding Box: (0.009328842, 0.06021726, 0.69621, 0.95649123)
-Frame 321, FPS: 2.0, Objects: 2
-Frame 322, FPS: 2.0, Objects: 2
-Frame 323, FPS: 2.0, Objects: 3
-Frame 324, FPS: 2.0, Objects: 2
-Frame 325, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 79.79, Bounding Box: (0.15066648, 0.111543775, 0.33495095, 0.8383882)
-  Object 2 | Class: sedia, Confidence: 66.40, Bounding Box: (0.010828316, 0.047536403, 0.70239705, 0.94939137)
-Frame 326, FPS: 2.0, Objects: 2
-Frame 327, FPS: 2.0, Objects: 2
-Frame 328, FPS: 2.0, Objects: 2
-Frame 329, FPS: 2.0, Objects: 2
-Frame 330, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 82.44, Bounding Box: (0.15374994, 0.14180899, 0.331849, 0.8460037)
-  Object 2 | Class: sedia, Confidence: 68.75, Bounding Box: (0.0095658, 0.05771616, 0.6925403, 0.9590914)
-Frame 331, FPS: 2.0, Objects: 2
-Frame 332, FPS: 2.0, Objects: 2
-Frame 333, FPS: 2.0, Objects: 2
-Frame 334, FPS: 2.0, Objects: 2
-Frame 335, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 81.28, Bounding Box: (0.15297294, 0.1334823, 0.3318022, 0.8456818)
-  Object 2 | Class: sedia, Confidence: 67.74, Bounding Box: (0.008718699, 0.06014633, 0.69631207, 0.95990026)
-Frame 336, FPS: 2.0, Objects: 2
-Frame 337, FPS: 2.0, Objects: 2
-Frame 338, FPS: 2.0, Objects: 2
-Frame 339, FPS: 2.0, Objects: 2
-Frame 340, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 81.75, Bounding Box: (0.15100694, 0.1390847, 0.3305028, 0.83915305)
-  Object 2 | Class: sedia, Confidence: 68.04, Bounding Box: (0.011021346, 0.053843617, 0.69717383, 0.95705867)
-Frame 341, FPS: 2.0, Objects: 2
-Frame 342, FPS: 2.0, Objects: 2
-Frame 343, FPS: 2.0, Objects: 2
-Frame 344, FPS: 2.0, Objects: 2
-Frame 345, FPS: 2.0, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 82.05, Bounding Box: (0.15162817, 0.13013673, 0.33207497, 0.8479125)
-  Object 2 | Class: sedia, Confidence: 67.98, Bounding Box: (0.009893358, 0.060436457, 0.6892955, 0.9572208)
-Frame 346, FPS: 2.0, Objects: 2
-Frame 347, FPS: 2.0, Objects: 2
-Frame 348, FPS: 2.0, Objects: 2
-Frame 349, FPS: 2.0, Objects: 2
-Frame 350, FPS: 1.9, Objects: 3
-  Object 1 | Class: bottiglia, Confidence: 82.36, Bounding Box: (0.15171762, 0.13884908, 0.3326109, 0.84585756)
-  Object 2 | Class: sedia, Confidence: 68.05, Bounding Box: (0.007419884, 0.058989823, 0.6848667, 0.9626892)
-  Object 3 | Class: bottiglia, Confidence: 50.57, Bounding Box: (0.16466357, 0.49963975, 0.3263644, 0.81929255)
-Frame 351, FPS: 1.9, Objects: 2
-Frame 352, FPS: 1.9, Objects: 2
-Frame 353, FPS: 1.9, Objects: 2
-Frame 354, FPS: 1.9, Objects: 2
-Frame 355, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 82.15, Bounding Box: (0.15489441, 0.14010048, 0.33309397, 0.84423363)
-  Object 2 | Class: sedia, Confidence: 68.95, Bounding Box: (0.009632379, 0.059263915, 0.69787467, 0.95567334)
-Frame 356, FPS: 1.9, Objects: 2
-Frame 357, FPS: 1.9, Objects: 2
-Frame 358, FPS: 1.9, Objects: 2
-Frame 359, FPS: 1.9, Objects: 2
-Frame 360, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 81.24, Bounding Box: (0.15367466, 0.13644287, 0.33139744, 0.8474053)
-  Object 2 | Class: sedia, Confidence: 67.48, Bounding Box: (0.011341542, 0.057343632, 0.69376445, 0.9589225)
-Frame 361, FPS: 1.9, Objects: 2
-Frame 362, FPS: 1.9, Objects: 2
-Frame 363, FPS: 1.9, Objects: 2
-Frame 364, FPS: 1.9, Objects: 2
-Frame 365, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 82.21, Bounding Box: (0.14999439, 0.13863549, 0.33253002, 0.8494183)
-  Object 2 | Class: sedia, Confidence: 67.62, Bounding Box: (0.008508533, 0.059773266, 0.6863512, 0.95740265)
-Frame 366, FPS: 1.9, Objects: 2
-Frame 367, FPS: 1.9, Objects: 2
-Frame 368, FPS: 1.9, Objects: 2
-Frame 369, FPS: 1.9, Objects: 2
-Frame 370, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 82.09, Bounding Box: (0.15298218, 0.1269564, 0.3324081, 0.846065)
-  Object 2 | Class: sedia, Confidence: 69.13, Bounding Box: (0.01026085, 0.056753606, 0.6970556, 0.95934236)
-Frame 371, FPS: 1.9, Objects: 2
-Frame 372, FPS: 1.9, Objects: 2
-Frame 373, FPS: 1.9, Objects: 2
-Frame 374, FPS: 1.9, Objects: 2
-Frame 375, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 82.29, Bounding Box: (0.15432936, 0.1401585, 0.33208767, 0.84199464)
-  Object 2 | Class: sedia, Confidence: 68.30, Bounding Box: (0.010191023, 0.06017229, 0.6949988, 0.9607786)
-Frame 376, FPS: 1.9, Objects: 2
-Frame 377, FPS: 1.9, Objects: 2
-Frame 378, FPS: 1.9, Objects: 2
-Frame 379, FPS: 1.9, Objects: 2
-Frame 380, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 81.89, Bounding Box: (0.15294576, 0.12943712, 0.3316526, 0.8491113)
-  Object 2 | Class: sedia, Confidence: 67.38, Bounding Box: (0.009855717, 0.06144315, 0.6926023, 0.9552116)
-Frame 381, FPS: 1.9, Objects: 2
-Frame 382, FPS: 1.9, Objects: 2
-Frame 383, FPS: 1.9, Objects: 2
-Frame 384, FPS: 1.9, Objects: 2
-Frame 385, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 81.59, Bounding Box: (0.15179133, 0.13276255, 0.33195788, 0.84354377)
-  Object 2 | Class: sedia, Confidence: 61.59, Bounding Box: (0.011977732, 0.055224895, 0.7034434, 0.95195067)
-Frame 386, FPS: 1.9, Objects: 2
-Frame 387, FPS: 1.9, Objects: 2
-Frame 388, FPS: 1.9, Objects: 2
-Frame 389, FPS: 1.9, Objects: 2
-Frame 390, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 80.61, Bounding Box: (0.15304288, 0.15114242, 0.3274852, 0.85273176)
-  Object 2 | Class: sedia, Confidence: 66.34, Bounding Box: (0.015744925, 0.07231489, 0.6994327, 0.96140504)
-Frame 391, FPS: 1.9, Objects: 2
-Frame 392, FPS: 1.9, Objects: 3
-Frame 393, FPS: 1.9, Objects: 2
-Frame 394, FPS: 1.9, Objects: 2
-Frame 395, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 81.04, Bounding Box: (0.1554234, 0.14084616, 0.33119795, 0.8413789)
-  Object 2 | Class: sedia, Confidence: 68.85, Bounding Box: (0.010734856, 0.057539314, 0.6974801, 0.9601524)
-Frame 396, FPS: 1.9, Objects: 2
-Frame 397, FPS: 1.9, Objects: 2
-Frame 398, FPS: 1.9, Objects: 2
-Frame 399, FPS: 1.9, Objects: 2
-Frame 400, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 82.41, Bounding Box: (0.15220961, 0.14260003, 0.33165815, 0.84520113)
-  Object 2 | Class: sedia, Confidence: 67.70, Bounding Box: (0.009532511, 0.05984971, 0.69048506, 0.960871)
-Frame 401, FPS: 1.9, Objects: 2
-Frame 402, FPS: 1.9, Objects: 2
-Frame 403, FPS: 1.9, Objects: 3
-Frame 404, FPS: 1.9, Objects: 3
-Frame 405, FPS: 1.9, Objects: 2
-  Object 1 | Class: bottiglia, Confidence: 81.90, Bounding Box: (0.1530955, 0.13955471, 0.33140707, 0.84715426)
-  Object 2 | Class: sedia, Confidence: 63.36, Bounding Box: (0.012225717, 0.05776605, 0.7000667, 0.954082)
+Frame 1, FPS: 0.7, Objects: 1
+Frame 2, FPS: 0.7, Objects: 0
+Frame 3, FPS: 0.7, Objects: 0
+Frame 4, FPS: 0.7, Objects: 0
+Frame 5, FPS: 0.7, Objects: 0
+Frame 6, FPS: 0.8, Objects: 0
+Frame 7, FPS: 0.8, Objects: 1
+Frame 8, FPS: 0.8, Objects: 0
+Frame 9, FPS: 0.8, Objects: 0
+Frame 10, FPS: 0.8, Objects: 2
+  Object 1 | Class: frigorifero, Confidence: 51.68, Bounding Box: (0.48559418, -0.004954964, 0.99961495, 0.99139404)
+  Object 2 | Class: frigorifero, Confidence: 50.54, Bounding Box: (0.122974426, 0.0036952496, 0.9690002, 1.0005175)
+Frame 11, FPS: 0.8, Objects: 0
+Frame 12, FPS: 0.9, Objects: 2
+Frame 13, FPS: 0.9, Objects: 0
+Frame 14, FPS: 0.9, Objects: 0
+Frame 15, FPS: 0.9, Objects: 0
+Frame 16, FPS: 0.9, Objects: 0
+Frame 17, FPS: 0.9, Objects: 0
+Frame 18, FPS: 0.9, Objects: 0
+Frame 19, FPS: 0.9, Objects: 0
+Frame 20, FPS: 1.0, Objects: 0
+Frame 21, FPS: 1.0, Objects: 2
+Frame 22, FPS: 1.0, Objects: 1
+Frame 23, FPS: 1.0, Objects: 0
+Frame 24, FPS: 1.0, Objects: 0
+Frame 25, FPS: 1.0, Objects: 0
+Frame 26, FPS: 1.0, Objects: 0
+Frame 27, FPS: 1.0, Objects: 0
+Frame 28, FPS: 1.0, Objects: 0
+Frame 29, FPS: 1.0, Objects: 0
+Frame 30, FPS: 1.0, Objects: 0
+Frame 31, FPS: 1.0, Objects: 2
+Frame 32, FPS: 1.0, Objects: 0
+Frame 33, FPS: 1.0, Objects: 0
+Frame 34, FPS: 1.0, Objects: 1
+Frame 35, FPS: 1.0, Objects: 0
+Frame 36, FPS: 1.0, Objects: 0
+Frame 37, FPS: 1.0, Objects: 0
+Frame 38, FPS: 1.0, Objects: 0
+Frame 39, FPS: 1.0, Objects: 0
+Frame 40, FPS: 1.0, Objects: 0
+Frame 41, FPS: 1.0, Objects: 0
+Frame 42, FPS: 1.0, Objects: 0
+Frame 43, FPS: 1.0, Objects: 0
+Frame 44, FPS: 1.0, Objects: 0
+Frame 45, FPS: 1.0, Objects: 0
+Frame 46, FPS: 1.0, Objects: 0
+Frame 47, FPS: 1.0, Objects: 0
+Frame 48, FPS: 1.0, Objects: 0
+Frame 49, FPS: 1.0, Objects: 0
+Frame 50, FPS: 1.0, Objects: 0
+Frame 51, FPS: 1.0, Objects: 0
+Frame 52, FPS: 1.0, Objects: 0
+Frame 53, FPS: 1.0, Objects: 0
+Frame 54, FPS: 1.0, Objects: 0
+Frame 55, FPS: 1.0, Objects: 0
+Frame 56, FPS: 1.0, Objects: 0
+Frame 57, FPS: 1.0, Objects: 0
+Frame 58, FPS: 1.0, Objects: 0
+Frame 59, FPS: 1.0, Objects: 0
+Frame 60, FPS: 1.0, Objects: 0
+Frame 61, FPS: 1.0, Objects: 1
+Frame 62, FPS: 1.0, Objects: 0
+Frame 63, FPS: 1.0, Objects: 0
+Frame 64, FPS: 1.0, Objects: 0
+Frame 65, FPS: 1.0, Objects: 0
+Frame 66, FPS: 1.0, Objects: 0
+Frame 67, FPS: 1.0, Objects: 0
+Frame 68, FPS: 1.0, Objects: 0
+Frame 69, FPS: 1.0, Objects: 0
+Frame 70, FPS: 1.0, Objects: 0
+Frame 71, FPS: 1.0, Objects: 0
+Frame 72, FPS: 1.0, Objects: 0
+Frame 73, FPS: 1.0, Objects: 0
+Frame 74, FPS: 1.0, Objects: 0
+Frame 75, FPS: 1.0, Objects: 0
+Frame 76, FPS: 1.0, Objects: 0
+Frame 77, FPS: 1.0, Objects: 0
+Frame 78, FPS: 1.0, Objects: 0
+Frame 79, FPS: 1.0, Objects: 0
+Frame 80, FPS: 1.0, Objects: 1
+  Object 1 | Class: frigorifero, Confidence: 52.58, Bounding Box: (0.48528042, -0.0050742924, 0.9989778, 0.9910133)
+Frame 81, FPS: 1.0, Objects: 0
+Frame 82, FPS: 1.0, Objects: 0
+Frame 83, FPS: 1.0, Objects: 0
+Frame 84, FPS: 1.0, Objects: 1
+Frame 85, FPS: 1.0, Objects: 1
+  Object 1 | Class: frigorifero, Confidence: 50.31, Bounding Box: (0.48968178, -0.005932629, 0.99949557, 0.99066705)
+Frame 86, FPS: 1.0, Objects: 1
+Frame 87, FPS: 1.0, Objects: 1
+Frame 88, FPS: 1.0, Objects: 0
+Frame 89, FPS: 1.0, Objects: 0
+Frame 90, FPS: 1.0, Objects: 0
+Frame 91, FPS: 1.0, Objects: 0
+Frame 92, FPS: 1.0, Objects: 0
+Frame 93, FPS: 1.0, Objects: 0
+Frame 94, FPS: 1.0, Objects: 0
+Frame 95, FPS: 1.0, Objects: 0
+Frame 96, FPS: 1.0, Objects: 0
+Frame 97, FPS: 1.0, Objects: 1
+Frame 98, FPS: 1.0, Objects: 0
+Frame 99, FPS: 1.0, Objects: 0
+Frame 100, FPS: 1.0, Objects: 3
+  Object 1 | Class: persona, Confidence: 59.06, Bounding Box: (0.0048210025, 0.12049818, 0.89384246, 0.9681796)
+  Object 2 | Class: ombrello, Confidence: 51.90, Bounding Box: (-0.01457575, 0.0027619302, 0.87643135, 0.47250098)
+  Object 3 | Class: ombrello, Confidence: 51.86, Bounding Box: (0.0035970807, 0.12436429, 0.89225775, 0.9685495)
+Frame 101, FPS: 1.0, Objects: 3
+Frame 102, FPS: 1.0, Objects: 3
+Frame 103, FPS: 1.0, Objects: 3
+Frame 104, FPS: 1.0, Objects: 3
+Frame 105, FPS: 1.0, Objects: 3
+  Object 1 | Class: ombrello, Confidence: 66.22, Bounding Box: (0.0010055602, -0.0019295216, 0.98942065, 0.52387106)
+  Object 2 | Class: persona, Confidence: 64.05, Bounding Box: (-0.019515753, 0.2526569, 0.9649705, 1.0074681)
+  Object 3 | Class: ombrello, Confidence: 55.36, Bounding Box: (-0.0015813708, 0.21399352, 0.90411896, 0.95236087)
+Frame 106, FPS: 1.0, Objects: 3
+Frame 107, FPS: 1.0, Objects: 3
+Frame 108, FPS: 1.0, Objects: 3
+Frame 109, FPS: 1.0, Objects: 3
+Frame 110, FPS: 1.0, Objects: 3
+  Object 1 | Class: persona, Confidence: 68.12, Bounding Box: (-0.018232673, 0.24670064, 0.9588226, 1.0091659)
+  Object 2 | Class: ombrello, Confidence: 66.98, Bounding Box: (0.0032809377, -0.0030469, 0.9938351, 0.5151454)
+  Object 3 | Class: ombrello, Confidence: 55.53, Bounding Box: (0.002768755, 0.2181063, 0.89531225, 0.95891225)
+Frame 111, FPS: 1.0, Objects: 3
+Frame 112, FPS: 1.0, Objects: 1
+Frame 113, FPS: 1.0, Objects: 1
+Frame 114, FPS: 1.0, Objects: 2
+Frame 115, FPS: 1.0, Objects: 1
+  Object 1 | Class: persona, Confidence: 54.54, Bounding Box: (-4.6044588e-05, 0.7408251, 0.5943806, 1.0021954)
+Frame 116, FPS: 1.0, Objects: 0
+Frame 117, FPS: 1.0, Objects: 0
+Frame 118, FPS: 1.0, Objects: 1
+Frame 119, FPS: 1.0, Objects: 2
+Frame 120, FPS: 1.0, Objects: 2
+  Object 1 | Class: persona, Confidence: 54.45, Bounding Box: (-0.00090652704, 0.018003732, 0.945745, 0.9846214)
+  Object 2 | Class: persona, Confidence: 50.16, Bounding Box: (-0.0009239018, 0.6273748, 0.85356677, 1.0008032)
+Frame 121, FPS: 1.0, Objects: 1
+Frame 122, FPS: 1.0, Objects: 2
+Frame 123, FPS: 1.0, Objects: 1
+Frame 124, FPS: 1.0, Objects: 0
+Frame 125, FPS: 1.0, Objects: 0
+Frame 126, FPS: 1.0, Objects: 1
+Frame 127, FPS: 1.0, Objects: 1
+Frame 128, FPS: 1.0, Objects: 2
+Frame 129, FPS: 1.0, Objects: 1
+Frame 130, FPS: 1.0, Objects: 2
+  Object 1 | Class: persona, Confidence: 62.67, Bounding Box: (0.0071274936, 0.26522824, 0.99357414, 0.9867176)
+  Object 2 | Class: ombrello, Confidence: 56.57, Bounding Box: (0.008063972, 0.27438095, 0.99335605, 0.9867182)
+Frame 131, FPS: 1.0, Objects: 2
+Frame 132, FPS: 1.0, Objects: 2
+Frame 133, FPS: 1.0, Objects: 2
+Frame 134, FPS: 1.0, Objects: 2
+Frame 135, FPS: 1.0, Objects: 2
+  Object 1 | Class: persona, Confidence: 62.02, Bounding Box: (0.10420889, 0.37838832, 0.9451435, 0.99250996)
+  Object 2 | Class: ombrello, Confidence: 60.52, Bounding Box: (0.04510045, 0.13957033, 0.98200345, 0.9498415)
+Frame 136, FPS: 1.0, Objects: 3
+Frame 137, FPS: 1.0, Objects: 3
+Frame 138, FPS: 1.0, Objects: 1
+Frame 139, FPS: 1.0, Objects: 2
+Frame 140, FPS: 1.0, Objects: 2
+  Object 1 | Class: ombrello, Confidence: 70.73, Bounding Box: (0.04706776, 0.09004557, 0.9905634, 0.8375701)
+  Object 2 | Class: persona, Confidence: 62.87, Bounding Box: (0.13200554, 0.3952405, 0.9477011, 0.99396354)
+Frame 141, FPS: 1.0, Objects: 2
+Frame 142, FPS: 1.0, Objects: 2
+Frame 143, FPS: 1.0, Objects: 2
+Frame 144, FPS: 1.0, Objects: 2
+Frame 145, FPS: 1.0, Objects: 2
+  Object 1 | Class: ombrello, Confidence: 72.24, Bounding Box: (0.048402637, 0.06053734, 0.9923465, 0.7940784)
+  Object 2 | Class: persona, Confidence: 68.52, Bounding Box: (0.12572834, 0.4094651, 0.9209416, 0.99337983)
+Frame 146, FPS: 1.0, Objects: 2
+Frame 147, FPS: 1.0, Objects: 2
+Frame 148, FPS: 1.0, Objects: 2
+Frame 149, FPS: 1.0, Objects: 2
+Frame 150, FPS: 1.0, Objects: 2
+  Object 1 | Class: persona, Confidence: 66.74, Bounding Box: (0.050080657, 0.01819548, 0.95951116, 1.0043129)
+  Object 2 | Class: orsacchiotto, Confidence: 54.95, Bounding Box: (0.10560578, 0.57486796, 0.887084, 1.0004339)
+Frame 151, FPS: 1.0, Objects: 3
+Frame 152, FPS: 1.0, Objects: 2
+Frame 153, FPS: 1.0, Objects: 1
+Frame 154, FPS: 1.0, Objects: 1
+Frame 155, FPS: 1.0, Objects: 1
+  Object 1 | Class: persona, Confidence: 58.39, Bounding Box: (0.10073593, 0.6230947, 0.85062397, 0.9953501)
+Frame 156, FPS: 1.0, Objects: 2
+Frame 157, FPS: 1.0, Objects: 2
+Frame 158, FPS: 1.0, Objects: 2
+Frame 159, FPS: 1.0, Objects: 1
+Frame 160, FPS: 1.0, Objects: 2
+  Object 1 | Class: persona, Confidence: 62.70, Bounding Box: (0.049378276, 0.5820735, 0.84830177, 0.99636716)
+  Object 2 | Class: persona, Confidence: 56.27, Bounding Box: (0.008007616, 0.014107794, 0.96124375, 0.9904212)
+Frame 161, FPS: 1.0, Objects: 2
+Frame 162, FPS: 1.0, Objects: 2
+Frame 163, FPS: 1.0, Objects: 2
+Frame 164, FPS: 1.0, Objects: 1
+Frame 165, FPS: 1.0, Objects: 1
+  Object 1 | Class: persona, Confidence: 62.94, Bounding Box: (0.060880303, 0.60288787, 0.7873616, 0.9961853)
+Frame 166, FPS: 1.0, Objects: 2
+Frame 167, FPS: 1.0, Objects: 2
+Frame 168, FPS: 1.0, Objects: 2
+Frame 169, FPS: 1.0, Objects: 1
+Frame 170, FPS: 1.0, Objects: 0
+Frame 171, FPS: 1.0, Objects: 1
+Frame 172, FPS: 1.0, Objects: 2
+Frame 173, FPS: 1.0, Objects: 2
+Frame 174, FPS: 1.0, Objects: 2
+Frame 175, FPS: 1.0, Objects: 1
+  Object 1 | Class: persona, Confidence: 62.32, Bounding Box: (0.08118409, 0.6054951, 0.7946527, 0.99475193)
+Frame 176, FPS: 1.0, Objects: 1
+Frame 177, FPS: 1.0, Objects: 1
+Frame 178, FPS: 1.0, Objects: 1
+Frame 179, FPS: 1.0, Objects: 2
+Frame 180, FPS: 1.0, Objects: 2
+  Object 1 | Class: persona, Confidence: 62.43, Bounding Box: (0.04167351, 0.5808622, 0.8534756, 0.99895054)
+  Object 2 | Class: persona, Confidence: 54.62, Bounding Box: (0.021925867, 0.026219577, 0.9558256, 0.9987627)
+Frame 181, FPS: 1.0, Objects: 2
+Frame 182, FPS: 1.0, Objects: 1
+Frame 183, FPS: 1.0, Objects: 1
+Frame 184, FPS: 1.0, Objects: 1
+Frame 185, FPS: 1.0, Objects: 1
+  Object 1 | Class: persona, Confidence: 61.78, Bounding Box: (0.055734962, 0.5959362, 0.80940676, 0.99676573)
+Frame 186, FPS: 1.0, Objects: 1
+Frame 187, FPS: 1.0, Objects: 1
+Frame 188, FPS: 1.0, Objects: 1
+Frame 189, FPS: 1.0, Objects: 1
+Frame 190, FPS: 1.0, Objects: 1
+  Object 1 | Class: persona, Confidence: 65.98, Bounding Box: (0.085418046, 0.50265205, 0.9204306, 1.0029805)
+Frame 191, FPS: 1.0, Objects: 1
+Frame 192, FPS: 1.0, Objects: 1
+Frame 193, FPS: 1.0, Objects: 1
+Frame 194, FPS: 1.0, Objects: 1
+Frame 195, FPS: 1.0, Objects: 1
+  Object 1 | Class: persona, Confidence: 61.74, Bounding Box: (0.12980673, 0.51856804, 0.92392504, 1.0067613)
+Frame 196, FPS: 1.0, Objects: 1
+Frame 197, FPS: 1.0, Objects: 2
+Frame 198, FPS: 1.0, Objects: 1
+Frame 199, FPS: 1.0, Objects: 1
+Frame 200, FPS: 1.0, Objects: 2
+  Object 1 | Class: persona, Confidence: 65.16, Bounding Box: (0.11570302, 0.5525785, 0.948318, 0.9961787)
+  Object 2 | Class: forno, Confidence: 54.86, Bounding Box: (0.05000612, 0.0023417473, 0.97382975, 0.8232068)
+Frame 201, FPS: 1.0, Objects: 1
+Frame 202, FPS: 1.0, Objects: 1
+Frame 203, FPS: 1.0, Objects: 1
+Frame 204, FPS: 1.0, Objects: 2
+Frame 205, FPS: 1.0, Objects: 2
+  Object 1 | Class: forno, Confidence: 61.31, Bounding Box: (0.07464424, 0.0027430654, 0.9805112, 0.83426917)
+  Object 2 | Class: persona, Confidence: 60.65, Bounding Box: (0.11144349, 0.53006005, 0.95499074, 1.001001)
+Frame 206, FPS: 1.0, Objects: 2
+Frame 207, FPS: 1.0, Objects: 1
+Frame 208, FPS: 1.0, Objects: 1
+Frame 209, FPS: 1.0, Objects: 1
+Frame 210, FPS: 1.0, Objects: 1
+  Object 1 | Class: persona, Confidence: 60.60, Bounding Box: (0.08959162, 0.5126656, 0.9408499, 1.0000978)
+Frame 211, FPS: 1.0, Objects: 2
+Frame 212, FPS: 1.0, Objects: 1
+Frame 213, FPS: 1.1, Objects: 1
+Frame 214, FPS: 1.1, Objects: 1
+Frame 215, FPS: 1.1, Objects: 1
+  Object 1 | Class: persona, Confidence: 62.36, Bounding Box: (0.029639393, 0.5259145, 0.9677732, 0.9999344)
+Frame 216, FPS: 1.1, Objects: 2
+Frame 217, FPS: 1.1, Objects: 1
+Frame 218, FPS: 1.1, Objects: 0
+Frame 219, FPS: 1.1, Objects: 0
+Frame 220, FPS: 1.1, Objects: 0
+Frame 221, FPS: 1.1, Objects: 1
+Frame 222, FPS: 1.1, Objects: 1
+Frame 223, FPS: 1.1, Objects: 0
+Frame 224, FPS: 1.1, Objects: 0
+Frame 225, FPS: 1.1, Objects: 0
+Frame 226, FPS: 1.1, Objects: 1
+Frame 227, FPS: 1.1, Objects: 0
+Frame 228, FPS: 1.1, Objects: 0
+Frame 229, FPS: 1.1, Objects: 0
+Frame 230, FPS: 1.1, Objects: 0
+Frame 231, FPS: 1.1, Objects: 1
+Frame 232, FPS: 1.1, Objects: 0
+Frame 233, FPS: 1.1, Objects: 0
+Frame 234, FPS: 1.1, Objects: 1
+Frame 235, FPS: 1.1, Objects: 0
+Frame 236, FPS: 1.1, Objects: 0
+Frame 237, FPS: 1.1, Objects: 0
+Frame 238, FPS: 1.1, Objects: 0

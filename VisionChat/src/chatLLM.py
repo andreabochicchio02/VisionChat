@@ -3,9 +3,13 @@ import requests
 import os
 from typing import List, Tuple
 
-# Constants
-URL = "http://10.150.246.144:11434/api/generate"
-MODEL = "llama3.2:3b"
+# Constants IVAN
+URL = "http://10.210.140.118:11434/api/generate"
+MODEL = "llama3.2"
+
+# Constants Andrea
+# URL = "http://10.150.246.144:11434/api/generate"
+# MODEL = "llama3.2:3b"
 
 # Load prompts from JSON file
 def load_prompts():
