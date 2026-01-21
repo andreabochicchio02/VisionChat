@@ -80,7 +80,7 @@ class VoiceAssistant:
         self.listening = False
 
         # Initialize LLM client
-        self.llm = LLMClient(self.language)
+        self.llm = LLMClient(self.language, max_history=0)
 
         # Find and configure microphone
         self.mic_index = self.find_usb_microphone()

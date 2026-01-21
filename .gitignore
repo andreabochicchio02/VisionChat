@@ -9,3 +9,4 @@ models/
 models2/
 yolov5nu_ncnn_model
 *.pt
+*.txt

@@ -111,7 +111,7 @@ def init_system():
     )
     detection_proc.start()
     
-    time.sleep(3)  # Warmup period
+    time.sleep(1)  # Warmup period
     
     # Start voice assistant in main process
     assistant = VoiceAssistant(detection_queue, ui_notification_queue, lang)

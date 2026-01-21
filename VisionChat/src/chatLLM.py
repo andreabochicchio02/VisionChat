@@ -38,6 +38,9 @@ class LLMClient:
         """
         Store a user question and LLM answer
         """
+        if self.max_history == 0:
+            return
+
         self.history.append((user_question, llm_answer))
 
         # Keep only last N interactions
@@ -121,15 +124,25 @@ class LLMClient:
         conversation_history = self.get_formatted_history()
 
         # Final prompt
-        prompt = (
-            f"{p['history_label']}\n"
-            f"{conversation_history}\n\n"
-            f"{p['objects_label']}\n"
-            f"{scene_description}\n"
-            f"{p['user_message_label']} {user_text}\n\n"
-            f"{p['instruction']}\n"
-            f"{p['user_message_label']} {user_text}\n"
-        )
+        if self.max_history > 0:
+            prompt = (
+                f"{p['history_label']}\n"
+                f"{conversation_history}\n\n"
+                f"{p['objects_label']}\n"
+                f"{scene_description}\n"
+                f"{p['user_message_label']} {user_text}\n\n"
+                f"{p['instruction']}\n"
+                f"{p['user_message_label']} {user_text}\n"
+            )
+        else:
+            # Skip history section when max_history is 0
+            prompt = (
+                f"{p['objects_label']}\n"
+                f"{scene_description}\n"
+                f"{p['user_message_label']} {user_text}\n\n"
+                f"{p['instruction']}\n"
+                f"{p['user_message_label']} {user_text}\n"
+            )
 
         payload = {"model": MODEL, "prompt": prompt, "stream": True}
 

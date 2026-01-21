@@ -77,8 +77,20 @@ class ObjectDetector:
         try:
             print("Initializing camera...")
             self.camera = Picamera2()
-            self.camera.configure(self.camera.create_video_configuration(main={"size": FRAME_SIZE}))
+
+            config = self.camera.create_video_configuration(
+                main={"size": FRAME_SIZE,},
+                buffer_count=2  # Reduce buffer count to lower memory usage
+            )
+
+            self.camera.configure(config)
+
+            self.camera.set_controls({
+                "FrameRate": 10.0  # Limit to 10 FPS to reduce CPU load
+            })
+
             self.camera.start()
+
             print("Camera started")
         except Exception as e:
             # Camera may not be present in some environments; keep object usable
