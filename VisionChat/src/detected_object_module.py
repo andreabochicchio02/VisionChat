@@ -69,6 +69,65 @@ class DetectedObject:
     def __repr__(self) -> str:
         return f"{self.class_name} ({self.confidence:.1f}%)"
 
+
+class MotionDetector:
+    """
+    Lightweight motion detector optimized for Raspberry Pi.
+    Uses simple frame differencing with downscaled frames.
+    """
+    
+    def __init__(self, threshold: int = 25, min_area_percent: float = 0.5, scale_factor: float = 0.25):
+        """
+        Args:
+            threshold: Pixel difference threshold (0-255)
+            min_area_percent: Minimum percentage of frame area to count as motion
+            scale_factor: Downscale factor for processing (0.25 = 1/4 resolution)
+        """
+        self.threshold = threshold
+        self.min_area_percent = min_area_percent
+        self.scale_factor = scale_factor
+        self.prev_gray = None
+    
+    def detect_motion(self, frame: np.ndarray) -> bool:
+        """
+        Detect motion using lightweight frame differencing.
+        Returns True if significant motion is detected.
+        """
+        # Downscale for faster processing
+        small = cv2.resize(frame, None, fx=self.scale_factor, fy=self.scale_factor, 
+                          interpolation=cv2.INTER_NEAREST)
+        
+        # Convert to grayscale
+        gray = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
+        
+        # Light blur to reduce noise (small kernel for speed)
+        gray = cv2.GaussianBlur(gray, (5, 5), 0)
+        
+        if self.prev_gray is None:
+            self.prev_gray = gray
+            return False
+        
+        # Compute absolute difference
+        frame_delta = cv2.absdiff(self.prev_gray, gray)
+        
+        # Binary threshold
+        _, thresh = cv2.threshold(frame_delta, self.threshold, 255, cv2.THRESH_BINARY)
+        
+        # Count changed pixels
+        motion_pixels = cv2.countNonZero(thresh)
+        total_pixels = gray.shape[0] * gray.shape[1]
+        motion_percent = (motion_pixels / total_pixels) * 100
+        
+        # Update previous frame
+        self.prev_gray = gray
+        
+        return motion_percent > self.min_area_percent
+    
+    def reset(self) -> None:
+        """Reset the motion detector state."""
+        self.prev_gray = None
+
+
 class ObjectDetector:
     """Wraps the DNN and Picamera2 camera for frame capture + detection."""
     def __init__(self, language: str):
@@ -180,12 +239,13 @@ class ObjectDetector:
 def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue, language: str) -> None:
     """Process entrypoint: capture frames, detect objects, and stream frames.
 
-    - `detection_queue` receives lists of DetectedObject
+    - `detection_queue` receives dicts with 'objects' and 'motion_detected' keys
     - `frame_queue` receives the latest JPEG bytes for streaming
     This function writes runtime logs to `log_camera.txt` in the same folder.
     """
 
     detector = ObjectDetector(language)
+    motion_detector = MotionDetector(threshold=25, min_area_percent=0.5, scale_factor=0.25)
     f = open('log_camera.txt', 'w')
     sys.stdout = f
 
@@ -202,10 +262,17 @@ def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue, l
             # Capture frame
             frame = detector.capture_frame()
             
-            # Run detection only every N frames
+            # Run motion detection every frame (lightweight)
+            motion_detected = motion_detector.detect_motion(frame)
+            
+            # Run object detection only every N frames
             if frame_count % DETECTION_INTERVAL == 0:
                 detections = detector.detect_objects(frame)
-                detection_queue.put(detections)
+                # Send both object detections and motion status
+                detection_queue.put({
+                    'objects': detections,
+                    'motion_detected': motion_detected
+                })
             else:
                 detections = detector._last_detections
 

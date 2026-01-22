@@ -88,7 +88,7 @@ class VoiceAssistant:
         # Thread for listening to proactive alerts from detection process
         self.alert_thread = None
         self.alert_enabled = []    # List of class names to report
-
+        self.motion_alert_enabled = False  # Flag for motion detection alerts
 
         # Stores the most recent object detections received from the vision process.
         # Required because detections are updated by the listener thread
@@ -173,19 +173,37 @@ class VoiceAssistant:
         """Background thread that listens for alerts from the object detection process"""
         while self.running:
             try:
-                detection = self.detection_queue.get(timeout=0.5)
+                detection_data = self.detection_queue.get(timeout=0.5)
+                
+                # Extract objects and motion status from detection data
+                detected_objects = detection_data.get('objects', [])
+                motion_detected = detection_data.get('motion_detected', False)
 
                 # Required lock because detections are shared by the listener thread
                 # and other thread (e.g. LLM interaction)
                 with self.last_detections_lock:
-                    self.last_detections = detection
+                    self.last_detections = detected_objects
 
-                visible_classes = {obj.class_name for obj in detection}
+                # Check for motion alerts
+                if self.motion_alert_enabled and motion_detected:
+                    msg = MESSAGES[self.language]['motion_notification']
+                    print(f"[MOTION NOTIFICATION] {msg}\n", flush=True)
+                    
+                    try:
+                        self.ui_notification_queue.put({"notification": msg})
+                    except Exception as e:
+                        print(f"Error sending motion notification to UI: {e}")
+                    
+                    self.speak_response(msg)
+                    self.motion_alert_enabled = False  # One-shot notification
+
+                # Check for object alerts
+                visible_classes = {obj.class_name for obj in detected_objects}
             
                 for cls in list(visible_classes):
                     if cls in self.alert_enabled:
                         # Get the first detected object of this class
-                        obj = next(o for o in detection if o.class_name == cls)
+                        obj = next(o for o in detected_objects if o.class_name == cls)
 
                         msg = MESSAGES[self.language]['notification'].format(
                             class_name=obj.class_name,
@@ -248,7 +266,15 @@ class VoiceAssistant:
         alert_info = self.llm.detect_alert_request(recognized_text)
 
         if isinstance(alert_info, dict) and alert_info.get("is_alert_request"):
-            valid_objects = [obj for obj in alert_info.get("target_objects", []) if obj in CLASSES[self.language]]
+            
+            # Check for motion alert request (LLM determines this directly)
+            if alert_info.get("is_motion_request"):
+                self.motion_alert_enabled = True
+                return MESSAGES[self.language]['motion_alert_response']
+            
+            # Handle object-based alerts
+            target_objects = alert_info.get("target_objects", [])
+            valid_objects = [obj for obj in target_objects if obj in CLASSES[self.language]]
             
             if valid_objects:
                 for obj in valid_objects:

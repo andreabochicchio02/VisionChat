@@ -4,7 +4,7 @@ import os
 from typing import List, Tuple
 
 # Constants IVAN
-URL = "http://10.210.140.118:11434/api/generate"
+URL = "http://10.87.30.118:11434/api/generate"
 MODEL = "llama3.2"
 
 # Constants Andrea
