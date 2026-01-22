@@ -13,8 +13,10 @@ from picamera2 import Picamera2
 MODEL_WEIGHTS = "models/ssd_mobilenet_v3_large_coco_2020_01_14/frozen_inference_graph.pb"
 MODEL_CONFIG = "models/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"
 CONFIDENCE_THRESHOLD = 0.50
-FRAME_SIZE = (640, 480)
-BLOB_SIZE = (320, 320)
+FRAME_SIZE = (640, 480)  
+BLOB_SIZE = (224, 224)   
+JPEG_QUALITY = 90        # Lower quality for faster encoding
+DETECTION_INTERVAL = 3   # Run detection every N frames
 
 
 def load_json_data() -> dict:
@@ -73,6 +75,7 @@ class ObjectDetector:
         self.net = None
         self.language = language
         self.classes = CLASSES.get(language)
+        self._last_detections: List[DetectedObject] = []  # Cache last detections
 
         try:
             print("Initializing camera...")
@@ -86,14 +89,13 @@ class ObjectDetector:
             self.camera.configure(config)
 
             self.camera.set_controls({
-                "FrameRate": 10.0  # Limit to 10 FPS to reduce CPU load
+                "FrameRate": 10.0
             })
 
             self.camera.start()
 
             print("Camera started")
         except Exception as e:
-            # Camera may not be present in some environments; keep object usable
             print(f"Failed to start camera: {e}", flush=True)
             self.camera = None
 
@@ -110,27 +112,18 @@ class ObjectDetector:
             print("Error loading model:", e)
             self.net = None
 
-    
-    def capture_and_detect(self) -> Tuple[List[DetectedObject], np.ndarray]:
-        """Capture one frame and run DNN detection.
-
-        Returns a tuple `(detected_objects, drawn_frame_bytes)` where
-        `detected_objects` is a list of DetectedObject instances and
-        `drawn_frame` is a CV image (BGR).
-        """
-
-        # Capture and convert to OpenCV BGR
+    def capture_frame(self) -> np.ndarray:
+        """Capture one frame and convert to BGR."""
         frame = self.camera.capture_array()
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        return cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
-        # Prepare blob and run forward pass
+    def detect_objects(self, frame: np.ndarray) -> List[DetectedObject]:
+        """Run DNN detection on the given frame."""
         blob = cv2.dnn.blobFromImage(frame, 1.0 / 127.5, BLOB_SIZE, (127.5, 127.5, 127.5), True, False)
         self.net.setInput(blob)
         detections = self.net.forward()
 
-        # SSD output: (1, 1, N, 7) -> [batch, class_id, confidence, x_min, y_min, x_max, y_max]
         detected_objects: List[DetectedObject] = []
-        height, width = frame.shape[:2]
 
         for i in range(detections.shape[2]):
             confidence = detections[0, 0, i, 2]
@@ -138,11 +131,8 @@ class ObjectDetector:
             if confidence > CONFIDENCE_THRESHOLD:
                 class_id = int(detections[0, 0, i, 1])
                 
-                # Usa self.classes pre-caricata
                 if class_id < len(self.classes) and self.classes[class_id] != "N/A":
-                    # Extract bounding box coordinates
                     x_min, y_min, x_max, y_max = detections[0, 0, i, 3:7]
-                    
                     class_name_str = self.classes[class_id]
 
                     detected_objects.append(DetectedObject(
@@ -151,19 +141,32 @@ class ObjectDetector:
                         bounding_box=(x_min, y_min, x_max, y_max)
                     ))
 
-                    # Draw bounding box
-                    box_x = int(x_min * width)
-                    box_y = int(y_min * height)
-                    box_w = int((x_max - x_min) * width)
-                    box_h = int((y_max - y_min) * height)
+        self._last_detections = detected_objects
+        return detected_objects
 
-                    cv2.rectangle(frame, (box_x, box_y), (box_x + box_w, box_y + box_h), (0, 255, 0), 2)
-                    
-                    # Label
-                    label = f"{class_name_str}: {confidence*100:.0f}%"
-                    cv2.putText(frame, label, (box_x, box_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+    def draw_detections(self, frame: np.ndarray, detections: List[DetectedObject]) -> np.ndarray:
+        """Draw bounding boxes on the frame."""
+        height, width = frame.shape[:2]
 
-        return detected_objects, frame
+        for obj in detections:
+            x_min, y_min, x_max, y_max = obj.box
+            box_x = int(x_min * width)
+            box_y = int(y_min * height)
+            box_w = int((x_max - x_min) * width)
+            box_h = int((y_max - y_min) * height)
+
+            cv2.rectangle(frame, (box_x, box_y), (box_x + box_w, box_y + box_h), (0, 255, 0), 2)  # Thinner line
+            label = f"{obj.class_name}: {obj.confidence:.0f}%"
+            cv2.putText(frame, label, (box_x, box_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+        return frame
+
+    def capture_and_detect(self) -> Tuple[List[DetectedObject], np.ndarray]:
+        """Capture one frame and run DNN detection (legacy method)."""
+        frame = self.capture_frame()
+        detections = self.detect_objects(frame)
+        frame = self.draw_detections(frame, detections)
+        return detections, frame
     
     def cleanup(self) -> None:
         """Stop camera if running and free resources."""
@@ -186,6 +189,9 @@ def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue, l
     f = open('log_camera.txt', 'w')
     sys.stdout = f
 
+    # JPEG encoding parameters
+    encode_params = [cv2.IMWRITE_JPEG_QUALITY, JPEG_QUALITY]
+
     try:
         detector.initialize()
 
@@ -193,16 +199,22 @@ def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue, l
         start_time = time.time()
         
         while True:
+            # Capture frame
+            frame = detector.capture_frame()
             
-            # Perform detection on current frame
-            detections, frame_drawn = detector.capture_and_detect()
-            detection_queue.put(detections)
+            # Run detection only every N frames
+            if frame_count % DETECTION_INTERVAL == 0:
+                detections = detector.detect_objects(frame)
+                detection_queue.put(detections)
+            else:
+                detections = detector._last_detections
+
+            # Draw detections on frame
+            frame_drawn = detector.draw_detections(frame, detections)
 
             # STREAMING VIDEO HANDLING
-            # Encode frame as JPG
-            ret, buffer = cv2.imencode('.jpg', frame_drawn)
+            ret, buffer = cv2.imencode('.jpg', frame_drawn, encode_params)
             if ret:
-                # Empty the frame queue if it is full to avoid lag (we only want the last frame)
                 if not frame_queue.empty():
                     try:
                         frame_queue.get_nowait()
