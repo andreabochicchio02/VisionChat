@@ -83,7 +83,7 @@ class LLMClient:
         payload = {"model": MODEL, "prompt": prompt, "stream": False, "format": "json"}
 
         try:
-            response = requests.post(URL, json=payload, timeout=10)
+            response = requests.post(URL, json=payload, timeout=20)
             response.raise_for_status()
 
             raw = response.json()
@@ -153,7 +153,7 @@ class LLMClient:
         full_response = ""
 
         try:
-            with requests.post(URL, json=payload, stream=True, timeout=10) as response:
+            with requests.post(URL, json=payload, stream=True, timeout=20) as response:
                 response.raise_for_status()
                 for line in response.iter_lines():
                     if not line:

@@ -15,7 +15,7 @@ MODEL_CONFIG = "models/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"
 CONFIDENCE_THRESHOLD = 0.50
 FRAME_SIZE = (640, 480)  
 BLOB_SIZE = (224, 224)   
-JPEG_QUALITY = 90        # Lower quality for faster encoding
+JPEG_QUALITY = 100        # Lower quality for faster encoding
 DETECTION_INTERVAL = 3   # Run detection every N frames
 
 
@@ -67,7 +67,7 @@ class DetectedObject:
         return f"{pos_v} {pos_h}"
 
     def __repr__(self) -> str:
-        return f"{self.class_name} ({self.confidence:.1f}%)"
+        return f"{self.class_name} ({int(self.confidence)}%)"
 
 
 class MotionDetector:
@@ -216,7 +216,9 @@ class ObjectDetector:
 
             cv2.rectangle(frame, (box_x, box_y), (box_x + box_w, box_y + box_h), (0, 255, 0), 2)  # Thinner line
             label = f"{obj.class_name}: {obj.confidence:.0f}%"
-            cv2.putText(frame, label, (box_x, box_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            # Place label below box if too close to top edge, otherwise above
+            label_y = box_y + 20 if box_y < 25 else box_y - 10
+            cv2.putText(frame, label, (box_x, label_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
         return frame
 
@@ -262,17 +264,19 @@ def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue, l
             # Capture frame
             frame = detector.capture_frame()
             
-            # Run motion detection every frame (lightweight)
-            motion_detected = motion_detector.detect_motion(frame)
-            
             # Run object detection only every N frames
             if frame_count % DETECTION_INTERVAL == 0:
+
+                # Run motion detection every frame (lightweight)
+                motion_detected = motion_detector.detect_motion(frame)
+
                 detections = detector.detect_objects(frame)
                 # Send both object detections and motion status
                 detection_queue.put({
                     'objects': detections,
                     'motion_detected': motion_detected
                 })
+
             else:
                 detections = detector._last_detections
 

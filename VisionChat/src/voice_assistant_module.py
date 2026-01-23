@@ -265,27 +265,27 @@ class VoiceAssistant:
 
         alert_info = self.llm.detect_alert_request(recognized_text)
 
-        if isinstance(alert_info, dict) and alert_info.get("is_alert_request"):
-            
-            # Check for motion alert request (LLM determines this directly)
+        if isinstance(alert_info, dict):
+            # Check for motion alert request (can be independent of is_alert_request)
             if alert_info.get("is_motion_request"):
                 self.motion_alert_enabled = True
                 return MESSAGES[self.language]['motion_alert_response']
             
-            # Handle object-based alerts
-            target_objects = alert_info.get("target_objects", [])
-            valid_objects = [obj for obj in target_objects if obj in CLASSES[self.language]]
-            
-            if valid_objects:
-                for obj in valid_objects:
-                    if obj not in self.alert_enabled:
-                        self.alert_enabled.append(obj)
-            
-                return MESSAGES[self.language]['alert_response'].format(
-                    objects=', '.join(valid_objects)
-                )
+            # Handle object-based alerts (requires is_alert_request)
+            if alert_info.get("is_alert_request"):
+                target_objects = alert_info.get("target_objects", [])
+                valid_objects = [obj for obj in target_objects if obj in CLASSES[self.language]]
+                
+                if valid_objects:
+                    for obj in valid_objects:
+                        if obj not in self.alert_enabled:
+                            self.alert_enabled.append(obj)
+                
+                    return MESSAGES[self.language]['alert_response'].format(
+                        objects=', '.join(valid_objects)
+                    )
 
-            return MESSAGES[self.language]['alert_no_objects']
+                return MESSAGES[self.language]['alert_no_objects']
         return ""
 
     def process_single_interaction_streaming(self):
