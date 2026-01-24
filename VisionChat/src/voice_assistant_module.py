@@ -10,6 +10,7 @@ from vosk import Model, KaldiRecognizer
 
 from detected_object_module import CLASSES
 from chatLLM import LLMClient
+from metrics_logger import create_voice_logger
 
 # Audio Configuration
 RATE = 44100
@@ -63,6 +64,9 @@ class VoiceAssistant:
         self.detection_queue = detection_queue
         self.ui_notification_queue = ui_notification_queue
         self.language = lang
+        
+        # Initialize metrics logger for voice assistant
+        self.metrics_logger = create_voice_logger(".")
         
         # Initialize Vosk speech recognition
         print("Loading speech recognition model")
@@ -126,6 +130,9 @@ class VoiceAssistant:
         self.recognizer.Reset()
         recognized_text = ""
         self.listening = True
+        
+        # Log speech recognition start
+        recognition_start = self.metrics_logger.log_speech_recognition_start()
 
         print("Listening...")
         start_time = time.time()
@@ -134,6 +141,7 @@ class VoiceAssistant:
             # Timeout after 10 seconds if no speech detected
             if time.time() - start_time > 10 and recognized_text == "":
                  self.listening = False
+                 self.metrics_logger.log_speech_recognition_end(recognition_start, "")
                  return ""
 
             try:
@@ -160,13 +168,23 @@ class VoiceAssistant:
                 continue
 
         self.listening = False
+        
+        # Log speech recognition end
+        self.metrics_logger.log_speech_recognition_end(recognition_start, recognized_text)
+        
         return recognized_text
     
     def speak_response(self, text: str) -> None:
+        # Log TTS start
+        tts_start = self.metrics_logger.log_tts_start(text)
+        
         if self.language == "it":
             text_to_speech_IT(text)
         else:
             text_to_speech_EN(text)
+        
+        # Log TTS end
+        self.metrics_logger.log_tts_end(tts_start, text)
         print("Speech complete")
 
     def listener(self) -> None:
@@ -301,11 +319,20 @@ class VoiceAssistant:
         """
         print("Starting interaction cycle via UI trigger")
         
+        # Log interaction start
+        interaction_start = self.metrics_logger.log_interaction_start()
+        user_word_count = 0
+        response_word_count = 0
+        success = False
+        
         # 1. Listen for user input
         user_text = self.record_and_recognize()
         if not user_text:
+            self.metrics_logger.log_interaction_end(interaction_start, 0, 0, False)
             yield {"error": "No speech detected."}
             return
+        
+        user_word_count = len(user_text.split())
 
         # Send user text to UI immediately after recognition
         yield {"user": user_text}
@@ -313,11 +340,17 @@ class VoiceAssistant:
         # 2. Check for alert requests (enable/disable notifications)
         alert_resp = self.handle_alert_request(user_text)
         if alert_resp:
+            response_word_count = len(alert_resp.split())
             # Send assistant response for alert
             yield {"assistant": alert_resp}
 
             # Speak the response
             self.speak_response(alert_resp)
+            
+            # Log interaction end
+            self.metrics_logger.log_interaction_end(
+                interaction_start, user_word_count, response_word_count, True
+            )
             return
 
         # 3. Get latest detected objects snapshot
@@ -330,13 +363,25 @@ class VoiceAssistant:
         for token in self.llm.generate_response(detected_objects, user_text):
             full_response_text += token
             yield {"token": token}
+        
+        response_word_count = len(full_response_text.split())
+        success = True
 
         # 5. Speak the response on Raspberry Pi
         self.speak_response(full_response_text)
+        
+        # Log interaction end
+        self.metrics_logger.log_interaction_end(
+            interaction_start, user_word_count, response_word_count, success
+        )
 
     def stop(self):
         """Stop all services and clean up resources"""
         self.running = False
+        
+        # Log session end
+        self.metrics_logger.log_session_end()
+        
         if self.stream:
             self.stream.stop_stream()
             self.stream.close()

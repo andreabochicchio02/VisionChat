@@ -1,7 +1,10 @@
 import json
 import requests
 import os
+import time
 from typing import List, Tuple
+
+from metrics_logger import create_llm_logger
 
 # Constants IVAN
 URL = "http://10.87.30.118:11434/api/generate"
@@ -32,6 +35,12 @@ class LLMClient:
         self.history: List[Tuple[str, str]] = []    # (user_question, llm_answer)
         self.alert_object_list = set()              # Stored as a set of class names (strings)
         self.language = lang                        # en or it
+        
+        # Initialize metrics logger for LLM requests
+        self.metrics_logger = create_llm_logger(".")
+        
+        # Track request counts for distinguishing first/second LLM requests
+        self.request_count = 0
 
 
     def add_interaction(self, user_question: str, llm_answer: str) -> None:
@@ -71,6 +80,9 @@ class LLMClient:
 
     def detect_alert_request(self, user_text: str) -> dict:
         """Detect whether the user requests an alert and extract targets."""
+        
+        self.request_count += 1
+        request_type = f"alert_detection_request_{self.request_count}"
 
         p = PROMPTS[self.language]['alert_detection']
         
@@ -81,34 +93,59 @@ class LLMClient:
         )
 
         payload = {"model": MODEL, "prompt": prompt, "stream": False, "format": "json"}
+        
+        # Log request start
+        request_start = self.metrics_logger.log_llm_request_start(request_type, len(prompt))
 
         try:
+            # Measure connection and send time
+            send_start = time.time()
             response = requests.post(URL, json=payload, timeout=20)
+            send_time_ms = (time.time() - send_start) * 1000
+            
             response.raise_for_status()
 
             raw = response.json()
             generated_respose = raw['response']
             result_json = json.loads(generated_respose)
             print(result_json)
+            
+            # Log request completion
+            self.metrics_logger.log_llm_request_end(
+                request_start, 
+                request_type, 
+                generated_respose,
+                len(generated_respose.split())  # Approximate token count
+            )
+            
+            # Log network timing
+            self.metrics_logger.log_llm_network_timing(0, send_time_ms, 0)
 
             return result_json
 
 
         except requests.exceptions.ConnectionError:
-            print(
+            error_msg = (
                 "Error: unable to connect to Ollama server. "
                 "Make sure Ollama is running with 'ollama serve'."
             )
+            print(error_msg)
+            self.metrics_logger.log_error("llm_connection_error", error_msg)
             return { "is_alert_request": False, "target_objects": []}
 
         except Exception as e:              # This also catches json.JSONDecodeError if the model returns invalid JSON
             print(f"An error occurred: {e}")
+            self.metrics_logger.log_error("llm_request_error", str(e))
             return { "is_alert_request": False, "target_objects": []}
 
 
 
     def generate_response(self, objects: List, user_text: str) -> str:
         """Generate a response based on detected objects and conversation history"""
+        
+        self.request_count += 1
+        request_type = f"response_generation_request_{self.request_count}"
+        
         p = PROMPTS[self.language]['response_generation']
 
         # Build scene description
@@ -151,10 +188,18 @@ class LLMClient:
         print("=" * 25)
 
         full_response = ""
+        token_count = 0
+        first_token_logged = False
+        
+        # Log request start
+        request_start = self.metrics_logger.log_llm_request_start(request_type, len(prompt))
 
         try:
+            send_start = time.time()
             with requests.post(URL, json=payload, stream=True, timeout=20) as response:
+                send_time_ms = (time.time() - send_start) * 1000
                 response.raise_for_status()
+                
                 for line in response.iter_lines():
                     if not line:
                         continue
@@ -163,6 +208,13 @@ class LLMClient:
 
                     if "response" in chunk:
                         token = chunk["response"]
+                        token_count += 1
+                        
+                        # Log time to first token
+                        if not first_token_logged:
+                            self.metrics_logger.log_llm_first_token(request_start)
+                            first_token_logged = True
+                        
                         full_response += token
                         
                         # Yield each token for streaming to UI
@@ -171,6 +223,17 @@ class LLMClient:
                         break
 
                 print("\n")
+                
+                # Log request completion
+                self.metrics_logger.log_llm_request_end(
+                    request_start,
+                    request_type,
+                    full_response,
+                    token_count
+                )
+                
+                # Log network timing
+                self.metrics_logger.log_llm_network_timing(0, send_time_ms, 0)
 
                 # Save interaction after streaming is complete
                 self.add_interaction(user_text, full_response)
@@ -181,9 +244,11 @@ class LLMClient:
                 "Make sure Ollama is running with 'ollama serve'."
             )
             print(error_msg)
+            self.metrics_logger.log_error("llm_connection_error", error_msg)
             yield error_msg
 
         except Exception as e:
             error_msg = f"An error occurred: {e}"
             print(error_msg)
+            self.metrics_logger.log_error("llm_request_error", str(e))
             yield error_msg
