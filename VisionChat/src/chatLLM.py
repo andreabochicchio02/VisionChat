@@ -14,6 +14,9 @@ MODEL = "llama3.2"
 # URL = "http://10.150.246.144:11434/api/generate"
 # MODEL = "llama3.2:3b"
 
+# Reusable session for connection pooling (keeps connections alive)
+_session = requests.Session()
+
 # Load prompts from JSON file
 def load_prompts():
     """Load language-specific prompts from JSON file"""
@@ -21,6 +24,41 @@ def load_prompts():
     with open(prompts_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     return {lang: data["text"][lang] for lang in data.get("text")}
+
+
+def warmup_model() -> bool:
+    """
+    Send a minimal warmup request to preload the model into memory.
+    This eliminates cold-start latency for the first real user request.
+    
+    Returns:
+        True if warmup succeeded, False otherwise
+    """
+    print("Warming up LLM model...")
+    warmup_start = time.time()
+    
+    # Minimal prompt to load the model without generating much
+    payload = {
+        "model": MODEL,
+        "prompt": "Hi",
+        "stream": False,
+        "options": {
+            "num_predict": 1  # Generate only 1 token (minimal work)
+        }
+    }
+    
+    try:
+        response = _session.post(URL, json=payload, timeout=60)
+        response.raise_for_status()
+        warmup_time = time.time() - warmup_start
+        print(f"LLM model warmed up in {warmup_time:.2f}s")
+        return True
+    except requests.exceptions.ConnectionError:
+        print("Warning: Could not warm up LLM - Ollama server not reachable")
+        return False
+    except Exception as e:
+        print(f"Warning: LLM warmup failed: {e}")
+        return False
 
 
 PROMPTS = load_prompts()
@@ -98,9 +136,9 @@ class LLMClient:
         request_start = self.metrics_logger.log_llm_request_start(request_type, len(prompt))
 
         try:
-            # Measure connection and send time
+            # Measure connection and send time (using session for connection pooling)
             send_start = time.time()
-            response = requests.post(URL, json=payload, timeout=20)
+            response = _session.post(URL, json=payload, timeout=20)
             send_time_ms = (time.time() - send_start) * 1000
             
             response.raise_for_status()
@@ -195,8 +233,9 @@ class LLMClient:
         request_start = self.metrics_logger.log_llm_request_start(request_type, len(prompt))
 
         try:
+            # Using session for connection pooling (reduces latency on subsequent requests)
             send_start = time.time()
-            with requests.post(URL, json=payload, stream=True, timeout=20) as response:
+            with _session.post(URL, json=payload, stream=True, timeout=20) as response:
                 send_time_ms = (time.time() - send_start) * 1000
                 response.raise_for_status()
                 
