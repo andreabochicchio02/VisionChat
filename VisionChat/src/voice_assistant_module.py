@@ -310,10 +310,11 @@ class VoiceAssistant:
         """
         Generator that yields updates for streaming response to UI.
         
-        Flow:
+        Flow (UNIFIED - single LLM call):
         - Listen to user input
         - Yield user text immediately after recognition
-        - Process with LLM
+        - Process with single unified LLM query (handles both alerts and responses)
+        - Parse response for alert markers
         - Yield assistant response
         - Speak response on Raspberry Pi
         """
@@ -337,38 +338,49 @@ class VoiceAssistant:
         # Send user text to UI immediately after recognition
         yield {"user": user_text}
 
-        # 2. Check for alert requests (enable/disable notifications)
-        alert_resp = self.handle_alert_request(user_text)
-        if alert_resp:
-            response_word_count = len(alert_resp.split())
-            # Send assistant response for alert
-            yield {"assistant": alert_resp}
-
-            # Speak the response
-            self.speak_response(alert_resp)
-            
-            # Log interaction end
-            self.metrics_logger.log_interaction_end(
-                interaction_start, user_word_count, response_word_count, True
-            )
-            return
-
-        # 3. Get latest detected objects snapshot
+        # 2. Get latest detected objects snapshot
         with self.last_detections_lock:
             detected_objects = list(self.last_detections)        
         
         full_response_text = ''
 
-        # 4. Stream tokens from LLM to UI
-        for token in self.llm.generate_response(detected_objects, user_text):
+        # 3. Stream tokens from unified LLM query (handles both alerts and responses)
+        for token in self.llm.generate_unified_response(detected_objects, user_text):
             full_response_text += token
             yield {"token": token}
+        
+        # 4. Parse response for alert markers and handle them
+        alert_info = self.llm.parse_alert_from_response(full_response_text)
+        
+        if alert_info.get("is_alert_request"):
+            # Handle motion alerts
+            if alert_info.get("is_motion_request"):
+                self.motion_alert_enabled = True
+            
+            # Handle object alerts
+            target_objects = alert_info.get("target_objects", [])
+            valid_objects = [obj for obj in target_objects if obj in CLASSES[self.language]]
+            
+            for obj in valid_objects:
+                if obj not in self.alert_enabled:
+                    self.alert_enabled.append(obj)
+            
+            print(f"[UNIFIED] Alert enabled for objects: {valid_objects}, motion: {alert_info.get('is_motion_request')}")
         
         response_word_count = len(full_response_text.split())
         success = True
 
-        # 5. Speak the response on Raspberry Pi
-        self.speak_response(full_response_text)
+        # 5. Speak the response on Raspberry Pi (clean response without markers)
+        # Remove alert markers for TTS
+        clean_response = full_response_text
+        for marker in ["[ALERT]", "[MOTION]", "[alert]", "[motion]"]:
+            clean_response = clean_response.replace(marker, "")
+        # Remove [OBJECTS: ...] pattern
+        import re
+        clean_response = re.sub(r'\[OBJECTS?:[^\]]+\]', '', clean_response, flags=re.IGNORECASE)
+        clean_response = clean_response.strip()
+        
+        self.speak_response(clean_response)
         
         # Log interaction end
         self.metrics_logger.log_interaction_end(
