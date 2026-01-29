@@ -3,5 +3,5 @@ __pycache__/
 
 # Virtual environment 
 env/
-*.txt
+log_camera.txt
 *.jsonl
