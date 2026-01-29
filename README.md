@@ -112,9 +112,8 @@ Ensure the Raspberry Pi and the Host PC are on the **same Wi-Fi/LAN network**.
 
 ### 3. Run the Application
 
-Navigate to the source directory and execute the main application:
+Navigate to the project directory and execute the starting script:
 
 ```bash
-cd src
-python3 app.py
+./run.sh
 ```
