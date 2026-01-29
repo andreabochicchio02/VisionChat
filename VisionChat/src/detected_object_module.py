@@ -9,6 +9,8 @@ import numpy as np
 from typing import List, Tuple
 from picamera2 import Picamera2
 
+from metrics_logger import create_camera_logger
+
 
 MODEL_WEIGHTS = "models/ssd_mobilenet_v3_large_coco_2020_01_14/frozen_inference_graph.pb"
 MODEL_CONFIG = "models/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"
@@ -244,15 +246,24 @@ def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue, l
     - `detection_queue` receives dicts with 'objects' and 'motion_detected' keys
     - `frame_queue` receives the latest JPEG bytes for streaming
     This function writes runtime logs to `log_camera.txt` in the same folder.
+    Metrics are written to `log_camera_metrics.jsonl` in JSONL format.
     """
 
     detector = ObjectDetector(language)
     motion_detector = MotionDetector(threshold=25, min_area_percent=0.5, scale_factor=0.25)
+    
+    # Initialize metrics logger for camera process
+    metrics_logger = create_camera_logger(".")
+    
     f = open('log_camera.txt', 'w')
     sys.stdout = f
 
     # JPEG encoding parameters
     encode_params = [cv2.IMWRITE_JPEG_QUALITY, JPEG_QUALITY]
+
+    # Tracking for classification FPS
+    classification_frame_count = 0
+    classification_start_time = time.time()
 
     try:
         detector.initialize()
@@ -261,16 +272,40 @@ def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue, l
         start_time = time.time()
         
         while True:
-            # Capture frame
+            # Capture frame with timing
+            capture_start = time.time()
             frame = detector.capture_frame()
+            capture_time_ms = (time.time() - capture_start) * 1000
+            
+            # Log frame capture timing
+            metrics_logger.log_frame_capture(frame_count, capture_time_ms)
             
             # Run object detection only every N frames
             if frame_count % DETECTION_INTERVAL == 0:
 
-                # Run motion detection every frame (lightweight)
+                # Run motion detection with timing
+                motion_start = time.time()
                 motion_detected = motion_detector.detect_motion(frame)
+                motion_time_ms = (time.time() - motion_start) * 1000
+                metrics_logger.log_motion_detection(frame_count, motion_time_ms, motion_detected)
 
+                # Run object detection (inference) with timing
+                inference_start = time.time()
                 detections = detector.detect_objects(frame)
+                inference_time_ms = (time.time() - inference_start) * 1000
+                
+                # Log detection metrics
+                objects_info = [{"class": obj.class_name, "confidence": obj.confidence} for obj in detections]
+                metrics_logger.log_object_detection(
+                    frame_count, 
+                    inference_time_ms, 
+                    len(detections),
+                    objects_info
+                )
+                
+                # Update classification FPS tracking
+                classification_frame_count += 1
+
                 # Send both object detections and motion status
                 detection_queue.put({
                     'objects': detections,
@@ -283,8 +318,12 @@ def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue, l
             # Draw detections on frame
             frame_drawn = detector.draw_detections(frame, detections)
 
-            # STREAMING VIDEO HANDLING
+            # STREAMING VIDEO HANDLING with encoding timing
+            encoding_start = time.time()
             ret, buffer = cv2.imencode('.jpg', frame_drawn, encode_params)
+            encoding_time_ms = (time.time() - encoding_start) * 1000
+            metrics_logger.log_frame_encoding(frame_count, encoding_time_ms)
+            
             if ret:
                 if not frame_queue.empty():
                     try:
@@ -298,8 +337,16 @@ def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue, l
             frame_count += 1
             elapsed_time = time.time() - start_time
             fps = frame_count / elapsed_time if elapsed_time > 0 else 0
+            
+            # Calculate classification FPS (FPS for frames with detection)
+            classification_elapsed = time.time() - classification_start_time
+            classification_fps = classification_frame_count / classification_elapsed if classification_elapsed > 0 else 0
+            
+            # Log FPS metrics every 10 frames
+            if frame_count % 10 == 0:
+                metrics_logger.log_fps(frame_count, fps, classification_fps)
 
-            print(f"Frame {frame_count}, FPS: {fps:.1f}, Objects: {len(detections)}", flush=True)
+            print(f"Frame {frame_count}, FPS: {fps:.1f}, Classification FPS: {classification_fps:.1f}, Objects: {len(detections)}", flush=True)
             
 
             # Every 5 frames, print detailed detections
@@ -309,7 +356,9 @@ def object_detection_process(detection_queue: mp.Queue, frame_queue: mp.Queue, l
 
     except Exception as e:
         print(f"Error camera process: {e}")
+        metrics_logger.log_error("camera_process_error", str(e))
     finally:
+        metrics_logger.log_session_end()
         detector.cleanup()
 
         # stdout on console

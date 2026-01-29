@@ -7,6 +7,7 @@ from queue import Queue
 
 from detected_object_module import object_detection_process
 from voice_assistant_module import VoiceAssistant
+from chatLLM import warmup_model
 
 app = Flask(__name__)
 
@@ -102,6 +103,10 @@ def init_system():
     if lang not in ['it', 'en']:
         print("Invalid language, defaulting to English")
         lang = 'it'
+    
+    # Warm up the LLM model to eliminate cold-start latency
+    # This preloads the model into GPU/CPU memory before user interaction
+    warmup_model()
     
     # Start object detection in separate process
     print("Launching object detection process...")
