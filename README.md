@@ -4,6 +4,10 @@
 
 This project validates a hybrid architecture where perception tasks (vision/audio) run locally on resource-constrained hardware, while complex reasoning is offloaded to a local Large Language Model (LLM).
 
+[**Project Presentation**](https://github.com/andreabochicchio02/VisionChat/blob/main/Project%20presentation.pdf)
+
+[**Project Documentation**](https://github.com/andreabochicchio02/VisionChat/blob/main/Project%20documentation.pdf)
+
 ## Table of Contents
 - [System Overview](#system-overview)
 - [Key Features](#key-features)
